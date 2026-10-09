@@ -16,6 +16,7 @@ import { testDbConnection, closeDbPool, getDbConfigStatus } from "./db";
 import {
   saveBusinessComplete,
   getBusinessProfileById,
+  getBusinessHistory,
   getSavedReportByCode,
   saveAdvisoryMessage,
   getAdvisoryHistoryBySession,
@@ -1172,6 +1173,44 @@ LANGUAGE & TONE:
       res.status(500).json({
         success: false,
         error: "Failed to save business record to database. Please check input data and database connectivity.",
+      });
+    }
+  });
+
+  // Retrieve Business History (All saved evaluations in chronological order)
+  app.get("/api/business/history", async (req: express.Request, res: express.Response) => {
+    try {
+      const status = getDbConfigStatus();
+      if (!status.isConfigured) {
+        res.status(503).json({
+          success: false,
+          error: "Database is not configured. Please ensure Aiven credentials and CA certificate are set.",
+          evaluations: [],
+        });
+        return;
+      }
+
+      const businessName = req.query.businessName as string | undefined;
+      const businessIdParam = req.query.businessId ? Number(req.query.businessId) : undefined;
+      const district = req.query.district as string | undefined;
+
+      const evaluations = await getBusinessHistory({
+        businessName,
+        businessId: businessIdParam,
+        district,
+      });
+
+      res.json({
+        success: true,
+        count: evaluations.length,
+        evaluations,
+      });
+    } catch (err: any) {
+      console.error("[API Business History Error]:", err?.message || err);
+      res.status(500).json({
+        success: false,
+        error: "Failed to retrieve business evaluation history from database.",
+        evaluations: [],
       });
     }
   });

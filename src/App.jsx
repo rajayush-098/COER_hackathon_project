@@ -1643,7 +1643,7 @@ function App() {
                 >
                   <Menu size={17} className="toggle-icon-dots" />
                   <span className="toggle-label">
-                    {lang === "hi" ? "11 चरण मेन्यू" : "11 Steps Menu"}
+                    {t.stepsMenuBtn || (lang === "hi" ? "11 चरण मेन्यू" : "11 Steps Menu")}
                   </span>
                   <span className="toggle-current-badge">
                     {currentIndex + 1}/11
@@ -1706,6 +1706,11 @@ function App() {
                     result={result}
                     formatCurrency={formatCurrency}
                     lang={lang}
+                    t={t}
+                    onLoadEvaluation={(loadedResult) => {
+                      setResult(loadedResult);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
                     onJumpPage={(pId) => {
                       setActivePageId(pId);
                       window.scrollTo({ top: 0, behavior: "smooth" });

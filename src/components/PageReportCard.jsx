@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { Database, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { API_ROUTES } from "../apiRoutes";
+import { translations } from "../translations";
 
 export default function PageReportCard({ result, lang, formatCurrency }) {
   const isHi = lang === "hi";
+  const t = translations[lang] || translations.en;
 
   const [saving, setSaving] = useState(false);
   const [savedCode, setSavedCode] = useState(null);
@@ -136,17 +138,17 @@ export default function PageReportCard({ result, lang, formatCurrency }) {
             {saving ? (
               <>
                 <Loader2 size={16} className="animate-spin" />
-                <span>{isHi ? "सहेजा जा रहा है..." : "Saving..."}</span>
+                <span>{t.btnSaving || (isHi ? "सहेजा जा रहा है..." : "Saving...")}</span>
               </>
             ) : savedCode ? (
               <>
                 <CheckCircle2 size={16} />
-                <span>{isHi ? "डेटाबेस में सुरक्षित" : "Saved to MySQL"}</span>
+                <span>{t.savedParcha || (isHi ? "डेटाबेस में सुरक्षित" : "Saved to MySQL")}</span>
               </>
             ) : (
               <>
                 <Database size={16} />
-                <span>{isHi ? "डेटाबेस में सहेजें (Save)" : "Save to MySQL"}</span>
+                <span>{t.saveParcha || (isHi ? "डेटाबेस में सहेजें (Save)" : "Save to MySQL")}</span>
               </>
             )}
           </button>
@@ -156,7 +158,7 @@ export default function PageReportCard({ result, lang, formatCurrency }) {
             className="print-action-btn"
             onClick={handlePrint}
           >
-            {isHi ? "पर्चा प्रिंट करें (Print Parcha)" : "Print / Save PDF Report"}
+            {t.printParcha || (isHi ? "पर्चा प्रिंट करें (Print Parcha)" : "Print / Save PDF Report")}
           </button>
         </div>
       </div>

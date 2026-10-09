@@ -1,4 +1,10 @@
-export default function PageEmi({ result, formatCurrency, lang }) {
+import {
+  getUI,
+  getPageBadge,
+  translateAffordability,
+} from "../utils/translationHelper";
+
+export default function PageEmi({ result, formatCurrency, lang = "hi" }) {
   const isHi = lang === "hi";
 
   const schemeAnalysis = result.scheme_analysis ?? {};
@@ -28,13 +34,11 @@ export default function PageEmi({ result, formatCurrency, lang }) {
       <div className="page-header-banner">
         <div className="page-header-text">
           <span className="page-badge-pill">
-            {isHi ? "पेज 05 • महीने की किश्त (EMI)" : "Page 05 • Monthly EMI & Loan Schedule"}
+            {getPageBadge("emi", lang)}
           </span>
-          <h2>{isHi ? "लोन चुकाने का आसान प्लान" : "Loan Repayment & EMI Breakdown"}</h2>
+          <h2>{getUI("emiHeaderTitle", lang, "Loan Repayment & EMI Breakdown")}</h2>
           <p className="page-sub-desc">
-            {isHi
-              ? "हर महीने बैंक को कितनी किश्त देनी होगी और क्या आपका मुनाफा इस किश्त को आसानी से संभाल सकता है।"
-              : "Clear calculation of your monthly installment, interest cost, and repayment schedule."}
+            {getUI("emiHeaderDesc", lang, "Clear calculation of your monthly installment, interest cost, and repayment schedule.")}
           </p>
         </div>
 
@@ -42,16 +46,20 @@ export default function PageEmi({ result, formatCurrency, lang }) {
           <div>
             <strong>
               {isAffordable
-                ? isHi
-                  ? "किश्त भरना आसान व सुरक्षित है"
-                  : "Comfortable & Affordable EMI"
-                : isHi
-                ? "किश्त पर नजर रखें"
-                : "Manage EMI with Care"}
+                ? getUI("emiAffordableVerdict", lang, "Comfortable & Affordable EMI")
+                : getUI("emiCautionVerdict", lang, "Manage EMI with Care")}
             </strong>
             <p>
-              {isHi
+              {lang === "hi"
                 ? `आपकी कमाई का केवल ${emiRatio}% हिस्सा किश्त में जाएगा।`
+                : lang === "bn"
+                ? `আপনার নিট আয়ের মাত্র ${emiRatio}% অংশ কিস্তিতে যাবে।`
+                : lang === "mr"
+                ? `आपल्या उत्पन्नाचा फक्त ${emiRatio}% भाग हप्त्यात जाईल.`
+                : lang === "te"
+                ? `మీ సంపాదనలో కేవలం ${emiRatio}% మాత్రమే వాయిదాకు సరిపోతుంది.`
+                : lang === "ta"
+                ? `உங்கள் வருமானத்தில் ${emiRatio}% மட்டுமே தவணைக்கு செலவாகும்.`
                 : `Only ${emiRatio}% of your net earnings is required for EMI.`}
             </p>
           </div>
@@ -62,67 +70,79 @@ export default function PageEmi({ result, formatCurrency, lang }) {
       <div className="kpi-hero-grid">
         <div className="kpi-hero-card kpi-green">
           <div className="kpi-top">
-            <span className="kpi-tag">{isHi ? "हर माह देय" : "Monthly Due"}</span>
+            <span className="kpi-tag">{getUI("monthlyDueTag", lang, "Monthly Due")}</span>
           </div>
-          <p className="kpi-label">{isHi ? "महीने की किश्त (EMI)" : "Estimated Monthly EMI"}</p>
+          <p className="kpi-label">{getUI("estimatedMonthlyEmi", lang, "Estimated Monthly EMI")}</p>
           <h3 className="kpi-value text-green">{formatCurrency(monthlyEmi)}</h3>
           <p className="kpi-hint">
             {eligibleLoan > 0
-              ? isHi
-                ? `पात्र लोन: ${formatCurrency(eligibleLoan)} • प्रति माह किश्त`
-                : `Eligible Loan: ${formatCurrency(eligibleLoan)} • Monthly`
-              : isHi
-              ? "प्रति माह बैंक में जमा करने योग्य राशि"
-              : "Fixed installment per month"}
+              ? (lang === "bn"
+                  ? `যোগ্য ব্যাংক ঋণ: ${formatCurrency(eligibleLoan)} • প্রতি মাসে কিস্তি`
+                  : lang === "mr"
+                  ? `पात्र कर्ज: ${formatCurrency(eligibleLoan)} • दरमहा हप्ता`
+                  : lang === "te"
+                  ? `అర్హత రుణం: ${formatCurrency(eligibleLoan)} • నెలవారీ వాయిదా`
+                  : lang === "ta"
+                  ? `தகுதியான கடன்: ${formatCurrency(eligibleLoan)} • மாதாந்திர தவணை`
+                  : isHi
+                  ? `पात्र लोन: ${formatCurrency(eligibleLoan)} • प्रति माह किश्त`
+                  : `Eligible Loan: ${formatCurrency(eligibleLoan)} • Monthly`)
+              : (lang === "bn"
+                  ? "প্রতি মাসে ব্যাংকে জমা দেওয়ার নির্ধারিত পরিমাণ"
+                  : isHi
+                  ? "प्रति माह बैंक में जमा करने योग्य राशि"
+                  : "Fixed installment per month")}
           </p>
         </div>
 
         <div className="kpi-hero-card kpi-blue">
           <div className="kpi-top">
-            <span className="kpi-tag">{isHi ? "ब्याज दर" : "Interest Rate"}</span>
+            <span className="kpi-tag">{getUI("interestRate", lang, "Interest Rate")}</span>
           </div>
-          <p className="kpi-label">{isHi ? "वार्षिक ब्याज दर" : "Annual Interest Rate"}</p>
+          <p className="kpi-label">{getUI("annualInterestRate", lang, "Annual Interest Rate")}</p>
           <h3 className="kpi-value text-blue">
             {schemeInterestRate != null ? `${schemeInterestRate}% p.a.` : "N/A"}
           </h3>
           <p className="kpi-hint">
             {schemeAnalysis.scheme_name
-              ? isHi
-                ? `${schemeAnalysis.scheme_name} (SIH26091)`
-                : `${schemeAnalysis.scheme_name} (SIH26091)`
-              : isHi
-              ? "मानक दर"
-              : "Standard rate"}
+              ? `${schemeAnalysis.scheme_name} (SIH26091)`
+              : getUI("standardRate", lang, "Standard rate")}
           </p>
         </div>
 
         <div className="kpi-hero-card kpi-amber">
           <div className="kpi-top">
-            <span className="kpi-tag">{isHi ? "ब्याज लागत" : "Interest Cost"}</span>
+            <span className="kpi-tag">{getUI("interestCostTag", lang, "Interest Cost")}</span>
           </div>
-          <p className="kpi-label">{isHi ? "कुल ब्याज (Total Interest)" : "Total Interest Paid"}</p>
+          <p className="kpi-label">{getUI("totalInterestPaid", lang, "Total Interest Paid")}</p>
           <h3 className="kpi-value">{formatCurrency(totalInterest)}</h3>
           <p className="kpi-hint">
-            {isHi ? "पूरी अवधि में कुल अतिरिक्त ब्याज" : "Cost of credit across the entire loan period"}
+            {getUI("totalInterestSub", lang, "Cost of credit across the entire loan period")}
           </p>
         </div>
 
         <div className="kpi-hero-card kpi-purple">
           <div className="kpi-top">
-            <span className="kpi-tag">{isHi ? "अवधि व ग्रेस" : "Tenure & Grace"}</span>
+            <span className="kpi-tag">{getUI("tenureGraceTag", lang, "Tenure & Grace")}</span>
           </div>
-          <p className="kpi-label">{isHi ? "लोन चुकाने का समय" : "Total Repayment Tenure"}</p>
+          <p className="kpi-label">{getUI("totalTenureLabel", lang, "Total Repayment Tenure")}</p>
           <h3 className="kpi-value">
-            {tenureMonths != null ? `${tenureMonths} ${isHi ? "महीने" : "Months"}` : "N/A"}
+            {tenureMonths != null ? `${tenureMonths} ${getUI("monthsUnit", lang, "Months")}` : "N/A"}
           </h3>
           <p className="kpi-hint">
             {moratorium != null
-              ? isHi
-                ? `शुरुआती ${moratorium} महीने ग्रेस/छूट अवधि रहेगी`
-                : `Includes initial ${moratorium} months moratorium`
-              : isHi
-              ? "लागू नहीं"
-              : "Not applicable"}
+              ? (lang === "bn"
+                  ? `শুরুর ${moratorium} মাস কিস্তি স্থগিতের সুবিধা থাকবে`
+                  : lang === "mr"
+                  ? `सुरुवातीचे ${moratorium} महिने सवलत कालावधी असेल`
+                  : lang === "te"
+                  ? `ప్రారంభ ${moratorium} నెలల రాయితీ కాలం ఉంటుంది`
+                  : lang === "ta"
+                  ? `ஆரம்ப ${moratorium} மாதங்கள் சலுகை காலமாக இருக்கும்`
+                  : isHi
+                  ? `शुरुआती ${moratorium} महीने ग्रेस/छूट अवधि रहेगी`
+                  : `Includes initial ${moratorium} months moratorium`)
+              : getUI("notApplicable", lang, "Not applicable")}
           </p>
         </div>
       </div>
@@ -131,11 +151,9 @@ export default function PageEmi({ result, formatCurrency, lang }) {
       <div className="detail-card">
         <div className="detail-card-head">
           <div>
-            <h3>{isHi ? "किश्त सुरक्षा मीटर (EMI Affordability)" : "EMI Affordability Meter"}</h3>
+            <h3>{getUI("emiBurdenMeterTitle", lang, "EMI Affordability Meter")}</h3>
             <p>
-              {isHi
-                ? "यह बताता है कि आपकी बचत में से कितना हिस्सा किश्त में जा रहा है।"
-                : "Proportion of your income used to service the monthly installment."}
+              {getUI("emiBurdenMeterSub", lang, "Proportion of your income used to service the monthly installment.")}
             </p>
           </div>
         </div>
@@ -143,21 +161,15 @@ export default function PageEmi({ result, formatCurrency, lang }) {
         <div className="meter-container">
           <div className="meter-info-row">
             <span>
-              {isHi ? "कमाई पर किश्त का भार:" : "EMI to Profit Burden:"}{" "}
+              {lang === "bn" ? "আয়ের উপর কিস্তির চাপ:" : lang === "mr" ? "उत्पन्नावर हप्त्याचा भार:" : lang === "te" ? "ఆదాయంపై వాయిదా భారం:" : lang === "ta" ? "வருமானத்தில் தவணையின் சுமை:" : isHi ? "कमाई पर किश्त का भार:" : "EMI to Profit Burden:"}{" "}
               <strong>{emiRatio}%</strong>
             </span>
             <span className={emiRatio <= 30 ? "tag-green" : emiRatio <= 50 ? "tag-amber" : "tag-red"}>
               {emiRatio <= 30
-                ? isHi
-                  ? "बहुत सुरक्षित (Very Safe)"
-                  : "Very Safe & Light"
+                ? (lang === "bn" ? "অত্যন্ত নিরাপদ" : lang === "mr" ? "अतिशय सुरक्षित" : lang === "te" ? "చాలా సురక్షితం" : lang === "ta" ? "மிகவும் பாதுகாப்பானது" : isHi ? "बहुत सुरक्षित (Very Safe)" : "Very Safe & Light")
                 : emiRatio <= 50
-                ? isHi
-                  ? "सामान्य (Manageable)"
-                  : "Manageable"
-                : isHi
-                ? "भारी किश्त (High Burden)"
-                : "High Burden"}
+                ? (lang === "bn" ? "সহনশীল" : lang === "mr" ? "सांभाळण्यासारखा" : lang === "te" ? "నిర్వహించదగినది" : lang === "ta" ? "கட்டுக்குள் உள்ளது" : isHi ? "सामान्य (Manageable)" : "Manageable")
+                : (lang === "bn" ? "উচ্চ কিস্তির চাপ" : lang === "mr" ? "जास्त हप्ता भार" : lang === "te" ? "అధిక భారం" : lang === "ta" ? "அதிக சுமை" : isHi ? "भारी किश्त (High Burden)" : "High Burden")}
             </span>
           </div>
 
@@ -171,16 +183,24 @@ export default function PageEmi({ result, formatCurrency, lang }) {
           </div>
 
           <div className="meter-scale-markers">
-            <span>0% (आसान / Easy)</span>
-            <span>30% (सुरक्षित सीमा / Safe)</span>
-            <span>50% (अधिकतम / Upper Limit)</span>
+            <span>0% ({lang === "bn" ? "সহজ" : lang === "mr" ? "सोपे" : isHi ? "आसान" : "Easy"})</span>
+            <span>30% ({lang === "bn" ? "নিরাপদ সীমা" : lang === "mr" ? "सुरक्षित मर्यादा" : isHi ? "सुरक्षित सीमा" : "Safe"})</span>
+            <span>50% ({lang === "bn" ? "সর্বোচ্চ মাত্রা" : lang === "mr" ? "कमाल मर्यादा" : isHi ? "अधिकतम" : "Upper Limit"})</span>
             <span>100%</span>
           </div>
         </div>
 
         <p className="meter-explanation">
           {loanAfford.affordability_message ||
-            (isHi
+            (lang === "bn"
+              ? "আপনার মাসিক নিট সঞ্চয় কিস্তির চেয়ে অনেক বেশি, তাই আপনি সহজে ব্যাংকের ঋণ পরিশোধ করতে সক্ষম।"
+              : lang === "mr"
+              ? "आपली शुद्ध मासिक बचत हप्त्यापेक्षा खूप जास्त आहे, त्यामुळे बँक हप्ता वेळेवर फेडणे सहज शक्य आहे."
+              : lang === "te"
+              ? "మీ నికర నెలవారీ పొదుపు వాయిదా కంటే చాలా ఎక్కువ, కాబట్టి మీరు సమయానికి రుణం తీర్చగలరు."
+              : lang === "ta"
+              ? "உங்கள் மாதாந்திர நிகர சேமிப்பு தவணையை விட அதிகமாக உள்ளது, எனவே வங்கிக் கடனை எளிதாக திருப்பிச் செலுத்தலாம்."
+              : isHi
               ? "आपकी शुद्ध मासिक बचत किश्त से काफी अधिक है, इसलिए आप बैंक को समय पर किश्त चुकाने में पूरी तरह सक्षम हैं।"
               : "Your net monthly profit comfortably exceeds the EMI obligation, giving you ample safety margin.")}
         </p>
@@ -190,11 +210,9 @@ export default function PageEmi({ result, formatCurrency, lang }) {
       <div className="detail-card">
         <div className="detail-card-head">
           <div>
-            <h3>{isHi ? "तिमाही किश्त सारणी (Repayment Schedule)" : "Quarterly Repayment Schedule"}</h3>
+            <h3>{getUI("repaymentScheduleTitle", lang, "Quarterly Repayment Schedule")}</h3>
             <p>
-              {isHi
-                ? "हर 3 महीने (तिमाही) के अनुसार किश्त, ब्याज और बचा हुआ लोन देखें"
-                : "Quarter-by-quarter breakdown of installment, interest, and outstanding principal"}
+              {getUI("repaymentScheduleDesc", lang, "Quarter-by-quarter breakdown of installment, interest, and outstanding principal")}
             </p>
           </div>
         </div>
@@ -203,13 +221,13 @@ export default function PageEmi({ result, formatCurrency, lang }) {
           <table className="custom-table">
             <thead>
               <tr>
-                <th>{isHi ? "तिमाही (Quarter)" : "Quarter"}</th>
-                <th>{isHi ? "महीने (Months)" : "Months"}</th>
-                <th>{isHi ? "दौर (Phase)" : "Phase"}</th>
-                <th>{isHi ? "कुल किश्त (EMI)" : "Total EMI"}</th>
-                <th>{isHi ? "ब्याज (Interest)" : "Interest Part"}</th>
-                <th>{isHi ? "मूलधन (Principal)" : "Principal Part"}</th>
-                <th>{isHi ? "बाकी लोन (Outstanding)" : "Balance Left"}</th>
+                <th>{lang === "bn" ? "ত্রৈমাসিক" : lang === "mr" ? "तिमाही" : lang === "te" ? "త్రైమాసికం" : lang === "ta" ? "காலாண்டு" : isHi ? "तिमाही (Quarter)" : "Quarter"}</th>
+                <th>{lang === "bn" ? "মাস" : lang === "mr" ? "महिने" : lang === "te" ? "నెలలు" : lang === "ta" ? "மாதங்கள்" : isHi ? "महीने (Months)" : "Months"}</th>
+                <th>{lang === "bn" ? "ধাপ" : lang === "mr" ? "टप्पा" : lang === "te" ? "దశ" : lang === "ta" ? "கட்டம்" : isHi ? "दौर (Phase)" : "Phase"}</th>
+                <th>{lang === "bn" ? "মোট কিস্তি (EMI)" : lang === "mr" ? "एकूण हप्ता (EMI)" : isHi ? "कुल किश्त (EMI)" : "Total EMI"}</th>
+                <th>{lang === "bn" ? "সুদ" : lang === "mr" ? "व्याज" : isHi ? "ब्याज (Interest)" : "Interest Part"}</th>
+                <th>{lang === "bn" ? "আসল" : lang === "mr" ? "मुद्दल" : isHi ? "मूलधन (Principal)" : "Principal Part"}</th>
+                <th>{lang === "bn" ? "অবশিষ্ট ঋণ" : lang === "mr" ? "शिल्लक कर्ज" : isHi ? "बाकी लोन (Outstanding)" : "Balance Left"}</th>
               </tr>
             </thead>
             <tbody>
@@ -240,7 +258,9 @@ export default function PageEmi({ result, formatCurrency, lang }) {
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
-                    {isHi
+                    {lang === "bn"
+                      ? "কিস্তি সময়সূচি উপলব্ধ নেই।"
+                      : isHi
                       ? "किश्त सारणी उपलब्ध नहीं है।"
                       : "No quarterly repayment schedule available."}
                   </td>

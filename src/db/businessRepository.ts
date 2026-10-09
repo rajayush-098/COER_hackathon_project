@@ -49,7 +49,9 @@ export function generateReportCode(businessName: string): string {
 }
 
 /**
- * Atomically save business profile, financial record, and report card dossier in MySQL
+ * Atomically save business profile, financial record, and report card dossier in MySQL.
+ * If the business already exists, links the new evaluation to the existing business profile,
+ * ensuring all prior evaluations are preserved in chronological order.
  */
 export async function saveBusinessComplete(
   profile: BusinessProfileInput,
@@ -57,27 +59,55 @@ export async function saveBusinessComplete(
   reportPayload?: any
 ): Promise<SaveBusinessCompleteResult> {
   return await withTransaction<SaveBusinessCompleteResult>(async (conn: PoolConnection) => {
-    // 1. Insert into business_profiles
-    const [profileRes]: any = await conn.execute(
-      `INSERT INTO business_profiles 
-        (business_name, category, state, district, block, village_location, pincode, experience_level, udyam_number)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        profile.business_name.trim(),
-        profile.category.trim(),
-        profile.state.trim(),
-        profile.district.trim(),
-        profile.block?.trim() || null,
-        profile.village_location?.trim() || null,
-        profile.pincode?.trim() || null,
-        profile.experience_level?.trim() || "Beginner",
-        profile.udyam_number?.trim() || null,
-      ]
+    let businessId: number;
+
+    // 1. Check if business profile already exists by name and district
+    const [existing]: any = await conn.execute(
+      `SELECT id FROM business_profiles WHERE LOWER(business_name) = LOWER(?) AND LOWER(district) = LOWER(?) LIMIT 1`,
+      [profile.business_name.trim(), profile.district.trim()]
     );
 
-    const businessId = profileRes.insertId;
+    if (existing && existing.length > 0) {
+      businessId = existing[0].id;
+      // Update profile attributes while preserving record ID
+      await conn.execute(
+        `UPDATE business_profiles 
+         SET category = ?, state = ?, block = COALESCE(?, block), village_location = COALESCE(?, village_location), 
+             pincode = COALESCE(?, pincode), experience_level = ?, udyam_number = COALESCE(?, udyam_number)
+         WHERE id = ?`,
+        [
+          profile.category.trim(),
+          profile.state.trim(),
+          profile.block?.trim() || null,
+          profile.village_location?.trim() || null,
+          profile.pincode?.trim() || null,
+          profile.experience_level?.trim() || "Beginner",
+          profile.udyam_number?.trim() || null,
+          businessId,
+        ]
+      );
+    } else {
+      // Create new business profile
+      const [profileRes]: any = await conn.execute(
+        `INSERT INTO business_profiles 
+          (business_name, category, state, district, block, village_location, pincode, experience_level, udyam_number)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+          profile.business_name.trim(),
+          profile.category.trim(),
+          profile.state.trim(),
+          profile.district.trim(),
+          profile.block?.trim() || null,
+          profile.village_location?.trim() || null,
+          profile.pincode?.trim() || null,
+          profile.experience_level?.trim() || "Beginner",
+          profile.udyam_number?.trim() || null,
+        ]
+      );
+      businessId = profileRes.insertId;
+    }
 
-    // 2. Insert into business_financial_records
+    // 2. Insert new financial evaluation record (Preserves historical evaluations)
     const [finRes]: any = await conn.execute(
       `INSERT INTO business_financial_records
         (business_id, project_cost, margin_capital, eligible_loan, monthly_revenue, 
@@ -136,6 +166,85 @@ export async function saveBusinessComplete(
       financialRecordId,
       reportCode,
     };
+  });
+}
+
+/**
+ * Retrieve comprehensive business history with all evaluations in chronological order (newest first).
+ * Allows viewing all businesses or filtering by businessName / businessId.
+ */
+export async function getBusinessHistory(filters?: {
+  businessName?: string;
+  businessId?: number;
+  district?: string;
+}): Promise<any[]> {
+  let sql = `
+    SELECT 
+      bfr.id AS evaluation_id,
+      bfr.business_id,
+      bp.business_name,
+      bp.category,
+      bp.state,
+      bp.district,
+      bp.block,
+      bp.village_location,
+      bp.pincode,
+      bp.experience_level,
+      bp.udyam_number,
+      bfr.project_cost,
+      bfr.margin_capital,
+      bfr.eligible_loan,
+      bfr.monthly_revenue,
+      bfr.monthly_expenses,
+      bfr.monthly_profit,
+      bfr.yearly_profit,
+      bfr.monthly_emi,
+      bfr.matched_scheme_name,
+      bfr.interest_rate,
+      bfr.tenure_months,
+      bfr.moratorium_months,
+      bfr.affordability_status,
+      bfr.feasibility_verdict,
+      bfr.created_at AS evaluated_at,
+      sr.report_code,
+      sr.report_payload
+    FROM business_financial_records bfr
+    JOIN business_profiles bp ON bfr.business_id = bp.id
+    LEFT JOIN saved_reports sr ON sr.business_id = bp.id
+  `;
+
+  const whereClauses: string[] = [];
+  const params: any[] = [];
+
+  if (filters?.businessId) {
+    whereClauses.push("bp.id = ?");
+    params.push(filters.businessId);
+  } else if (filters?.businessName && filters.businessName.trim()) {
+    whereClauses.push("LOWER(bp.business_name) LIKE ?");
+    params.push(`%${filters.businessName.trim().toLowerCase()}%`);
+  }
+
+  if (filters?.district && filters.district.trim()) {
+    whereClauses.push("LOWER(bp.district) = ?");
+    params.push(filters.district.trim().toLowerCase());
+  }
+
+  if (whereClauses.length > 0) {
+    sql += ` WHERE ` + whereClauses.join(" AND ");
+  }
+
+  sql += ` ORDER BY bfr.created_at DESC LIMIT 100`;
+
+  const rows: any[] = await query(sql, params);
+  return rows.map((r: any) => {
+    if (typeof r.report_payload === "string") {
+      try {
+        r.report_payload = JSON.parse(r.report_payload);
+      } catch {
+        // Keep string if parse fails
+      }
+    }
+    return r;
   });
 }
 

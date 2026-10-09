@@ -15,6 +15,7 @@ export const API_ROUTES = {
   // MySQL Database endpoints
   SAVE_BUSINESS: "/api/business/save",
   GET_BUSINESS: "/api/business",
+  BUSINESS_HISTORY: "/api/business/history",
   GET_REPORT: "/api/reports",
   ADVISORY_HISTORY: "/api/advisory/history",
   MARKET_SCAN_LOG: "/api/market/scan-log",

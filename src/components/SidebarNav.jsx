@@ -14,6 +14,7 @@ import {
   Sparkles,
   Award,
 } from "lucide-react";
+import { getUI, translateVerdict } from "../utils/translationHelper";
 
 const PAGE_ICONS = {
   overview: BarChart3,
@@ -70,7 +71,7 @@ export default function SidebarNav({
           <div className="sidebar-header-top-row">
             <div className="sidebar-drawer-badge">
               <Layers size={13} style={{ color: "var(--primary)" }} />
-              <span>{lang === "hi" ? "11 चरण नेविगेशन" : "11 Steps Navigation"}</span>
+              <span>{t?.stepsMenuBtn || getUI("stepsNavigation", lang, "11 Steps Navigation")}</span>
             </div>
 
             <button
@@ -78,7 +79,7 @@ export default function SidebarNav({
               className="sidebar-close-btn"
               onClick={onClose}
               aria-label="Close menu"
-              title={lang === "hi" ? "मेन्यू बंद करें (Esc)" : "Close menu (Esc)"}
+              title={`${t?.close || getUI("close", lang, "Close")} (Esc)`}
             >
               <X size={18} />
             </button>
@@ -87,7 +88,7 @@ export default function SidebarNav({
           <div className="sidebar-business-info">
             <div>
               <h3 className="sidebar-biz-name" title={result?.business}>
-                {result?.business || "Business"}
+                {result?.business || getUI("businessCol", lang, "Business")}
               </h3>
               <p className="sidebar-biz-loc">
                 {result?.location || "Area"}, {result?.district || "District"}
@@ -106,23 +107,23 @@ export default function SidebarNav({
               marginBottom: "8px",
             }}
           >
-            {result?.feasibilityVerdict || result?.feasibility || (lang === "hi" ? "सत्यापन आवश्यक" : "Requires Verification")}
+            {result?.feasibilityVerdict ? translateVerdict(result.feasibilityVerdict, lang) : (result?.feasibility ? translateVerdict(result.feasibility, lang) : getUI("requiresVerification", lang, "Requires Verification"))}
           </div>
 
           <button
             type="button"
             className="sidebar-back-btn"
             onClick={onEditDetails}
-            title="Edit input numbers"
+            title={getUI("editDetails", lang, "Edit Details")}
           >
-            {t.editDetails}
+            {t.editDetails || getUI("editDetails", lang, "Edit Input Numbers")}
           </button>
         </div>
 
         <div className="sidebar-nav-title">
-          <span>{lang === "hi" ? "पेज चुनें (Side Pages)" : "Select Side Page"}</span>
+          <span>{getUI("selectSidePage", lang, "Select Side Page")}</span>
           <span className="page-count-badge">
-            {pages.length} {lang === "hi" ? "पेज" : "Pages"}
+            {pages.length} {getUI("pagesCount", lang, "Pages")}
           </span>
         </div>
 
@@ -158,12 +159,10 @@ export default function SidebarNav({
 
         <div className="sidebar-footer-card">
           <p className="sidebar-tip-title">
-            {lang === "hi" ? "मदद चाहिए?" : "Need Help?"}
+            {getUI("needHelp", lang, "Need Help?")}
           </p>
           <p className="sidebar-tip-desc">
-            {lang === "hi"
-              ? "ऊपर 'बोलकर सुनाएं' बटन दबाकर हर पेज की बात अपनी भाषा में सुनें।"
-              : "Click 'Listen in Voice' to hear explanations in simple speech."}
+            {getUI("sidebarHelpDesc", lang, "Click 'Listen in Voice' to hear explanations in simple speech.")}
           </p>
         </div>
       </aside>
