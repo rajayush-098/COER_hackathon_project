@@ -1,2 +1,2 @@
-# COER_hackathon_project
-project for hackathon
+# SIH2026
+hyper local business advisor
