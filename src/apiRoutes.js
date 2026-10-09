@@ -21,6 +21,8 @@ export const API_ROUTES = {
   MARKET_SCAN_LOG: "/api/market/scan-log",
   // data.gov.in Mandi Commodity Prices
   MANDI_PRICES: "/api/mandi/prices",
+  MANDI_SUGGESTIONS: "/api/mandi/suggestions",
+  MANDI_META: "/api/mandi/meta",
 };
 
 export default API_ROUTES;

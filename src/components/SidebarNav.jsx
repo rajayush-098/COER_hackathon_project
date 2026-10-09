@@ -41,6 +41,8 @@ export default function SidebarNav({
   t,
   onEditDetails,
 }) {
+  const isHi = lang === "hi" || lang === "hinglish";
+
   // Listen for Escape key to close the menu
   useEffect(() => {
     if (!isOpen) return;
@@ -156,6 +158,41 @@ export default function SidebarNav({
             );
           })}
         </nav>
+
+        <div style={{ padding: "0 16px 12px 16px" }}>
+          <button
+            type="button"
+            onClick={() => {
+              onSelectPage("market");
+              if (onClose) onClose();
+            }}
+            style={{
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              padding: "10px 14px",
+              borderRadius: "10px",
+              backgroundColor: "#ecfdf5",
+              border: "1.5px solid #a7f3d0",
+              color: "#065f46",
+              cursor: "pointer",
+              textAlign: "left",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.04)",
+              transition: "all 0.15s ease",
+            }}
+          >
+            <span style={{ fontSize: "20px" }}>🌾</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: "13px", color: "#065f46" }}>
+                {lang === "bn" ? "মান্ডি দর চেকার" : lang === "mr" ? "मंडी भाव चेकर" : isHi ? "मंडी भाव चेकर" : "Mandi Price Checker"}
+              </div>
+              <div style={{ fontSize: "11px", color: "#047857" }}>
+                data.gov.in Agmarknet Portal
+              </div>
+            </div>
+          </button>
+        </div>
 
         <div className="sidebar-footer-card">
           <p className="sidebar-tip-title">

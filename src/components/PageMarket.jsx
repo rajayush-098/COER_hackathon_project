@@ -107,6 +107,9 @@ export default function PageMarket({
     generateLiveMarketAdvisory();
   }, [localMarketData, targetDistrict, targetState, lang, isHi, formData, result]);
 
+  // View mode switcher: "all" (complete view) | "mandi" (dedicated Mandi Price Checker) | "scanner" (field map)
+  const [marketViewMode, setMarketViewMode] = useState("all");
+
   return (
     <div className="side-page-content">
       <div className="page-header-banner">
@@ -143,22 +146,116 @@ export default function PageMarket({
         </div>
       </div>
 
-      {/* Comprehensive OpenStreetMap & Leaflet Hyper-Local Environment Scanner */}
-      <HyperLocalScanner
-        userLat={userLat}
-        userLng={userLng}
-        businessCategory={formData?.category || result?.category || "Dairy & Milk Products"}
-        businessCategoryTag={businessCategoryTag}
-        onScanComplete={onScanComplete}
-        scannedData={localMarketData}
-        businessName={formData?.business_name || result?.business || "Kisan Dairy Farm"}
-        district={targetDistrict}
-        state={targetState}
-        lang={lang}
-      />
+      {/* Dedicated Section Mode Switcher for Independent Operation */}
+      <div
+        className="no-print"
+        style={{
+          display: "flex",
+          gap: "8px",
+          marginBottom: "20px",
+          padding: "6px",
+          backgroundColor: "#f1f5f9",
+          borderRadius: "12px",
+          width: "fit-content",
+          flexWrap: "wrap",
+        }}
+      >
+        <button
+          type="button"
+          onClick={() => setMarketViewMode("all")}
+          style={{
+            padding: "8px 16px",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: marketViewMode === "all" ? 800 : 600,
+            cursor: "pointer",
+            border: "none",
+            backgroundColor: marketViewMode === "all" ? "#ffffff" : "transparent",
+            color: marketViewMode === "all" ? "#0f172a" : "#475569",
+            boxShadow: marketViewMode === "all" ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+            transition: "all 0.15s ease",
+          }}
+        >
+          {lang === "bn" ? "📋 সম্পূর্ণ বিশ্লেষণ" : isHi ? "📋 सम्पूर्ण बाज़ार दृश्य" : "📋 Complete Market View"}
+        </button>
 
-      {/* 4 Market Highlight Cards */}
-      <div className="kpi-hero-grid">
+        <button
+          type="button"
+          onClick={() => setMarketViewMode("mandi")}
+          style={{
+            padding: "8px 18px",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: 800,
+            cursor: "pointer",
+            border: "none",
+            backgroundColor: marketViewMode === "mandi" ? "#059669" : "#ecfdf5",
+            color: marketViewMode === "mandi" ? "#ffffff" : "#065f46",
+            boxShadow: marketViewMode === "mandi" ? "0 2px 6px rgba(5,150,105,0.3)" : "none",
+            transition: "all 0.15s ease",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          <span>🌾</span>
+          <span>{lang === "bn" ? "মান্ডি দর চেকার" : isHi ? "मंडी भाव चेकर (data.gov.in)" : "Mandi Price Checker"}</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => setMarketViewMode("scanner")}
+          style={{
+            padding: "8px 16px",
+            borderRadius: "8px",
+            fontSize: "13px",
+            fontWeight: marketViewMode === "scanner" ? 800 : 600,
+            cursor: "pointer",
+            border: "none",
+            backgroundColor: marketViewMode === "scanner" ? "#ffffff" : "transparent",
+            color: marketViewMode === "scanner" ? "#0f172a" : "#475569",
+            boxShadow: marketViewMode === "scanner" ? "0 1px 4px rgba(0,0,0,0.08)" : "none",
+            transition: "all 0.15s ease",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "6px",
+          }}
+        >
+          <span>📍</span>
+          <span>{lang === "bn" ? "ওপেনস্ট্রিটম্যাপ স্ক্যানার" : isHi ? "फ़ील्ड मैप स्कैनर (OSM)" : "Hyper-Local Map Scanner"}</span>
+        </button>
+      </div>
+
+      {/* Mode 1: Dedicated Independent Mandi Price Checker View */}
+      {marketViewMode === "mandi" && (
+        <MandiPricesSection
+          defaultState={targetState}
+          defaultDistrict={targetDistrict}
+          category={formData?.category || result?.category}
+          lang={lang}
+        />
+      )}
+
+      {/* Mode 2 & 3: Comprehensive OpenStreetMap & Leaflet Hyper-Local Environment Scanner */}
+      {(marketViewMode === "scanner" || marketViewMode === "all") && (
+        <HyperLocalScanner
+          userLat={userLat}
+          userLng={userLng}
+          businessCategory={formData?.category || result?.category || "Dairy & Milk Products"}
+          businessCategoryTag={businessCategoryTag}
+          onScanComplete={onScanComplete}
+          scannedData={localMarketData}
+          businessName={formData?.business_name || result?.business || "Kisan Dairy Farm"}
+          district={targetDistrict}
+          state={targetState}
+          lang={lang}
+        />
+      )}
+
+      {/* 4 Market Highlight Cards & Detailed Scanner Views (visible in 'all' and 'scanner' modes) */}
+      {(marketViewMode === "scanner" || marketViewMode === "all") && (
+        <>
+          <div className="kpi-hero-grid">
         <div className="kpi-hero-card kpi-green">
           <div className="kpi-top">
             <span className="kpi-tag">{lang === "bn" ? "চাহিদা" : lang === "mr" ? "मागणी" : isHi ? "माँग स्तर" : "Demand"}</span>
@@ -481,36 +578,42 @@ export default function PageMarket({
           </div>
         </div>
       )}
+      </>
+    )}
 
-      {/* Live Mandi Commodity Benchmark Prices (data.gov.in) */}
-      <MandiPricesSection
-        defaultState={targetState}
-        defaultDistrict={targetDistrict}
-        category={formData?.category || result?.category}
-        lang={lang}
-      />
+      {/* Live Mandi Commodity Benchmark Prices (data.gov.in) when in 'all' view */}
+      {marketViewMode === "all" && (
+        <MandiPricesSection
+          defaultState={targetState}
+          defaultDistrict={targetDistrict}
+          category={formData?.category || result?.category}
+          lang={lang}
+        />
+      )}
 
       {/* Local Recommendation advice */}
-      <div className="village-tip-banner">
-        <div>
-          <h4>{getUI("localStrategyTipTitle", lang, "Local Market Strategy Recommendation:")}</h4>
-          <p>
-            {market.recommendation
-              ? translateDynamicPhrase(market.recommendation, lang)
-              : (lang === "bn"
-                ? "স্থানীয় বাজারে আস্থাই সবচেয়ে বড় মূলধন। পণ্যের খাঁটি মান এবং সঠিক ওজন বজায় রাখুন। প্রথম ৩ মাসে পরিচিতি বাড়াতে গ্রাহকদের সাথে সুসম্পর্ক ও হোয়াটসঅ্যাপ গ্রুপ ব্যবহার করুন।"
-                : lang === "mr"
-                ? "स्थानिक बाजारात विश्वास हीच सर्वात मोठी संपत्ती आहे. चांगली गुणवत्ता व अचूक वजन ठेवा. सुरुवातीच्या ३ महिन्यांत ग्राहकांशी सुसंवाद आणि व्हॉट्सॲप ग्रुपचा वापर करून प्रचार करा."
-                : lang === "te"
-                ? "స్థానిక మార్కెట్‌లో నమ్మకమే అతిపెద్ద పెట్టుబడి. ఉత్పత్తుల నాణ్యత, సరైన తూకం పాటించండి. మొదటి 3 నెలల్లో స్థానిక వాట్సాప్ గ్రూపులు మరియు పరిచయాలతో ప్రచారం చేసుకోండి."
-                : lang === "ta"
-                ? "உள்ளூர் சந்தையில் நம்பிக்கையே மிகப்பெரிய மூலதனம். தரமான தயாரிப்புகளையும் துல்லியமான எடையையும் பேணுங்கள். ஆரம்ப 3 மாதங்களில் வாடிக்கையாளர் நன்மதிப்பையும் வாட்ஸ்அப் குழுக்களையும் பயன்படுத்துங்கள்."
-                : isHi
-                ? "गाँव के बाज़ार में भरोसा सबसे बड़ी पूँजी है। अच्छी गुणवत्ता और सही तौल रखें। शुरुआती 3 महीनों में ग्राहकों को अपने उत्पाद का प्रचार करने के लिए माउथ-टू-माउथ पब्लिसिटी और मोबाइल व्हाट्सएप ग्रुप का उपयोग करें।"
-                : "Trust and fair pricing build the strongest rural moat. Maintain consistent quality, offer transparent weight, and utilize local WhatsApp groups and word-of-mouth among panchayat members.")}
-          </p>
+      {(marketViewMode === "scanner" || marketViewMode === "all") && (
+        <div className="village-tip-banner">
+          <div>
+            <h4>{getUI("localStrategyTipTitle", lang, "Local Market Strategy Recommendation:")}</h4>
+            <p>
+              {market.recommendation
+                ? translateDynamicPhrase(market.recommendation, lang)
+                : (lang === "bn"
+                  ? "স্থানীয় বাজারে আস্থাই সবচেয়ে বড় মূলধন। পণ্যের খাঁটি মান এবং সঠিক ওজন বজায় রাখুন। প্রথম ৩ মাসে পরিচিতি বাড়াতে গ্রাহকদের সাথে সুসম্পর্ক ও হোয়াটসঅ্যাপ গ্রুপ ব্যবহার করুন।"
+                  : lang === "mr"
+                  ? "स्थानिक बाजारात विश्वास हीच सर्वात मोठी संपत्ती आहे. चांगली गुणवत्ता व अचूक वजन ठेवा. सुरुवातीच्या ३ महिन्यांत ग्राहकांशी सुसंवाद आणि व्हॉट्सॲप ग्रुपचा वापर करून प्रचार करा."
+                  : lang === "te"
+                  ? "స్థానిక మార్కెట్‌లో నమ్మకమే అతిపెద్ద పెట్టుబడి. ఉత్పత్తుల నాణ్యత, సరైన తూకం పాటించండి. మొదటి 3 నెలల్లో స్థానిక వాట్సాప్ గ్రూపులు మరియు పరిచయాలతో ప్రచారం చేసుకోండి."
+                  : lang === "ta"
+                  ? "உள்ளூர் சந்தையில் நம்பிக்கையே மிகப்பெரிய மூலதனம். தரமான தயாரிப்புகளையும் துல்லியமான எடையையும் பேணுங்கள். ஆரம்ப 3 மாதங்களில் வாடிக்கையாளர் நன்மதிப்பையும் வாட்ஸ்அப் குழுக்களையும் பயன்படுத்துங்கள்."
+                  : isHi
+                  ? "गाँव के बाज़ार में भरोसा सबसे बड़ी पूँजी है। अच्छी गुणवत्ता और सही तौल रखें। शुरुआती 3 महीनों में ग्राहकों को अपने उत्पाद का प्रचार करने के लिए माउथ-टू-माउथ पब्लिसिटी और मोबाइल व्हाट्सएप ग्रुप का उपयोग करें।"
+                  : "Trust and fair pricing build the strongest rural moat. Maintain consistent quality, offer transparent weight, and utilize local WhatsApp groups and word-of-mouth among panchayat members.")}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -1648,7 +1648,33 @@ function App() {
                 </h2>
               </div>
 
-              <div className="hub-top-right">
+              <div className="hub-top-right" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setActivePageId("market");
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "5px",
+                    padding: "7px 12px",
+                    borderRadius: "8px",
+                    backgroundColor: "#ecfdf5",
+                    border: "1.5px solid #a7f3d0",
+                    color: "#065f46",
+                    fontSize: "12.5px",
+                    fontWeight: 800,
+                    cursor: "pointer",
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+                  }}
+                  title="Check Mandi Prices (data.gov.in)"
+                >
+                  <span>🌾</span>
+                  <span>{lang === "hi" ? "मंडी भाव" : "Mandi Prices"}</span>
+                </button>
+
                 <button
                   type="button"
                   className="hub-back-edit-btn"

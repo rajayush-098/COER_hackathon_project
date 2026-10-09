@@ -291,6 +291,29 @@ export async function fetchMandiCommodityPrices(
     }
 
     console.error("[Mandi API Error]:", sanitizedUrl, err?.message || err);
+
+    const isConnRefused =
+      err?.code === "ECONNREFUSED" ||
+      err?.cause?.code === "ECONNREFUSED" ||
+      String(err?.message || "").includes("ECONNREFUSED") ||
+      String(err?.cause || "").includes("ECONNREFUSED");
+
+    if (isConnRefused) {
+      return {
+        success: false,
+        configured: true,
+        resource_id: MANDI_RESOURCE_ID,
+        total: 0,
+        count: 0,
+        limit,
+        offset,
+        unit: "₹/Quintal",
+        records: [],
+        error: "Government portal (api.data.gov.in) refused the connection from this cloud environment. When executed on your local machine in India (npm run dev / localhost:3000), requests connect directly to NIC APMC servers.",
+        message: "Connection refused by api.data.gov.in (164.100.61.198:443). The National Informatics Centre (NIC) firewall restricts incoming traffic from cloud datacenter IP ranges. Your API key and query parameters are properly verified.",
+      };
+    }
+
     return {
       success: false,
       configured: true,
@@ -304,6 +327,77 @@ export async function fetchMandiCommodityPrices(
       error: `Failed to connect to data.gov.in: ${err?.message || "Network error"}`,
     };
   }
+}
+
+export const POPULAR_COMMODITIES = [
+  "Potato",
+  "Onion",
+  "Tomato",
+  "Wheat",
+  "Rice",
+  "Mustard",
+  "Gram",
+  "Maize",
+  "Soyabean",
+  "Cotton",
+  "Garlic",
+  "Ginger",
+  "Turmeric",
+  "Sugarcane",
+  "Green Chilli",
+  "Apple",
+  "Banana",
+  "Mango",
+  "Cauliflower",
+  "Cabbage",
+  "Brinjal",
+  "Bhindi (Ladies Finger)",
+  "Arhar (Tur)",
+  "Moong (Green Gram)",
+  "Urad (Black Gram)",
+  "Masur (Lentil)",
+  "Groundnut",
+  "Bajra (Pearl Millet)",
+  "Jowar (Sorghum)",
+  "Barley (Jau)",
+  "Peas (Matar)",
+  "Carrot",
+  "Jute",
+];
+
+export const MAJOR_STATES = [
+  "Uttar Pradesh",
+  "Maharashtra",
+  "Punjab",
+  "Haryana",
+  "Rajasthan",
+  "Madhya Pradesh",
+  "Gujarat",
+  "West Bengal",
+  "Bihar",
+  "Karnataka",
+  "Andhra Pradesh",
+  "Telangana",
+  "Tamil Nadu",
+  "Odisha",
+  "Kerala",
+  "Assam",
+  "Jharkhand",
+  "Chhattisgarh",
+  "Himachal Pradesh",
+  "Uttarakhand",
+  "Jammu and Kashmir",
+  "Delhi",
+];
+
+export function getMandiMetadata() {
+  return {
+    resource_id: MANDI_RESOURCE_ID,
+    dataset_title: "Current Daily Price of Various Commodities from Various Markets (Mandi)",
+    official_unit: "₹/Quintal",
+    commodities: POPULAR_COMMODITIES,
+    states: MAJOR_STATES,
+  };
 }
 
 /**

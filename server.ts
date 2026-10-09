@@ -14,6 +14,7 @@ import type { DairyAnalysisResult } from "./src/dairyDataService";
 import {
   fetchMandiCommodityPrices,
   getSuggestedCommoditiesForCategory,
+  getMandiMetadata,
 } from "./src/mandiDataService";
 import { MEERUT_DATA, getTehsilMarketReach } from "./locationData";
 import rawBlocksData from "./src/rawBlocksData.json";
@@ -1439,6 +1440,19 @@ LANGUAGE & TONE:
       res.json({ success: true, category, suggestions });
     } catch (err: any) {
       res.status(500).json({ success: false, suggestions: [] });
+    }
+  });
+
+  app.get("/api/mandi/meta", (_req: express.Request, res: express.Response) => {
+    try {
+      const meta = getMandiMetadata();
+      res.json({
+        success: true,
+        configured: Boolean(process.env.DATA_GOV_IN_API_KEY),
+        ...meta,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: "Failed to load metadata" });
     }
   });
 
