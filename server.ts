@@ -185,7 +185,7 @@ async function startServer() {
     res: express.Response
   ) => {
     try {
-      const { message, context } = req.body;
+      const { message, context, language, lang } = req.body;
 
       if (!message || typeof message !== "string") {
         res.status(400).json({
@@ -194,11 +194,40 @@ async function startServer() {
         return;
       }
 
+      const languageMap: Record<string, string> = {
+        hi: "Hindi",
+        en: "English",
+        hinglish: "Hinglish (conversational Hindi written in English/Latin script)",
+        mr: "Marathi",
+        bn: "Bengali",
+        te: "Telugu",
+        ta: "Tamil",
+      };
+      const rawLang = language || lang || "hi";
+      const selectedLanguage = languageMap[rawLang] || rawLang || "Hindi";
+
+      const getFallbackGreeting = () => {
+        switch (rawLang) {
+          case "bn":
+            return "নমস্কার! আমি সহযোগী (SAHYOGI) — আপনার গ্রামীণ ব্যবসা সঙ্গী। ব্যবসার খরচ নিয়ন্ত্রণ করুন, সময়মতো ঋণের কিস্তি পরিশোধ করুন এবং সরাসরি গ্রাহকদের সাথে বিশ্বাস গড়ে তুলুন।";
+          case "mr":
+            return "नमस्कार! मी सहयोगी (SAHYOGI) आहे — आपला ग्रामीण व्यवसाय मित्र. सुरुवातीचा खर्च मर्यादित ठेवा, बँकेचे हप्ते वेळेवर भरा आणि ग्राहकांचा विश्वास संपादन करा.";
+          case "te":
+            return "నమస్కారం! నేను సహయోగి (SAHYOGI) — మీ గ్రామీణ వ్యాపార మిత్రుడు. ఖర్చులను అదుపులో ఉంచుకోండి, సమయానికి రుణ వాయిదాలు చెల్లించండి మరియు కస్టమర్ల విశ్వాసాన్ని పొందండి.";
+          case "ta":
+            return "வணக்கம்! நான் சஹயோகி (SAHYOGI) — உங்கள் வணிகத் தோழன். தொடக்கச் செலவுகளைக் கட்டுப்படுத்துங்கள், வங்கித் தவணைகளைச் சரியான நேரத்தில் செலுத்துங்கள் மற்றும் வாடிக்கையாளர் நம்பிக்கையைப் பெறுங்கள்.";
+          case "en":
+            return "Hello! I am SAHYOGI — your rural business companion. Keep your initial startup costs tight, service your bank EMIs on time, and build direct customer trust.";
+          case "hi":
+          default:
+            return "नमस्ते! मैं सहयोगी (SAHYOGI) हूँ — आपका ग्रामीण व्यापार साथी। अपने व्यापार को सफल बनाने के लिए शुरुआती लागत नियंत्रित रखें, समय पर बैंक किश्त भरें, और ग्राहकों से सीधा संपर्क बनाकर विश्वास अर्जित करें।";
+        }
+      };
+
       const ai = getGeminiClient();
       if (!ai) {
         res.json({
-          reply:
-            "नमस्ते! मैं सहयोगी (SAHYOGI) हूँ — आपका ग्रामीण व्यापार साथी। सर्वर में अभी AI कुंजी सेट नहीं है, लेकिन आप अपनी चुनी हुई व्यापार श्रेणी, लागत व लोन के संबंध में नीचे दिए गए नियमों का पालन कर सकते हैं।",
+          reply: getFallbackGreeting(),
           source: "fallback",
         });
         return;
@@ -229,7 +258,7 @@ Market Sizing: ${dData.market_sizing.explanation}`;
 Your purpose is to assist rural and semi-urban micro-entrepreneurs in India with honesty and clarity.
 Core Guidelines:
 - Ground your advice in the provided business profile. If a financial figure or metric is not provided, null, or zero, do not quote it as ₹0 or blank; simply state that detailed financial projections will be available once inputs are submitted or focus on practical guidance.
-- Answer in the language the user speaks (Hindi, Hinglish, or clear simple English).
+- Answer entirely in the requested language: ${selectedLanguage} (e.g. if Bengali, speak in natural Bengali script; if Marathi, speak in Marathi; if Telugu, speak in Telugu; if Tamil, speak in Tamil; if Hindi, speak in Hindi; if Hinglish, speak in Hinglish; if English, speak in English).
 - When discussing government schemes, clearly state that loan eligibility is subject to official verification and sanction by the lending bank.
 - Keep explanations simple, realistic, and encouraging, like a wise, trusted local business elder.
 ${contextStr}`;
@@ -267,22 +296,32 @@ ${contextStr}`;
           question: message,
           business_name: context?.businessName || context?.business_name,
           category: context?.category || context?.businessType,
+          language: selectedLanguage,
         });
         reply =
-          fallback.answer ||
-          "नमस्ते! अपने व्यापार को सफल बनाने के लिए शुरुआती लागत नियंत्रित रखें, समय पर बैंक किश्त भरें, और ग्राहकों से सीधा संपर्क बनाकर विश्वास अर्जित करें।";
+          fallback.answer || getFallbackGreeting();
       }
 
       res.json({ reply, source: "gemini" });
     } catch (error: any) {
       console.warn("Sahyogi Gemini call failed:", error?.message || error);
+      const rawLang = req.body?.language || req.body?.lang || "hi";
       const fallback = handleAdvisor({
         question: req.body?.message || "",
+        language: rawLang,
       });
       res.json({
         reply:
           fallback.answer ||
-          "नमस्ते! अपने व्यापार को सफल बनाने के लिए शुरुआती लागत सीमित रखें और सरकारी योजनाओं के तहत मिलने वाले ऋण का सदुपयोग करें।",
+          (rawLang === "bn"
+            ? "নমস্কার! ব্যবসা শুরু করার সময় নিজস্ব পুঁজি হিসাব করে খরচ করুন এবং সরকারি প্রকল্পের সহায়তা নিন।"
+            : rawLang === "mr"
+            ? "नमस्कार! व्यवसाय सुरू करताना भांडवल विचारपूर्वक वापरा आणि सरकारी योजनांचा योग्य लाभ घ्या."
+            : rawLang === "te"
+            ? "నమస్కారం! వ్యాపారం ప్రారంభించేటప్పుడు ఖర్చులను నియంత్రించండి మరియు ప్రభుత్వ పథకాల ప్రయోజనాలను పొందండి."
+            : rawLang === "ta"
+            ? "வணக்கம்! வணிகத்தைத் தொடங்கும் போது முதலீட்டை கவனமாக செலவிடுங்கள் மற்றும் அரசு திட்டங்களின் பலன்களைப் பெறுங்கள்."
+            : "नमस्ते! अपने व्यापार को सफल बनाने के लिए शुरुआती लागत सीमित रखें और सरकारी योजनाओं के तहत मिलने वाले ऋण का सदुपयोग करें।"),
         source: "fallback",
       });
     }
@@ -504,14 +543,51 @@ STRICT CONSTRAINTS:
 
       if (!market_summary) {
         if (dairyAnalysisResult) {
-          market_summary = rawLang === "hi"
-            ? `${dairyAnalysisResult.summary_report_hi}`
-            : `${dairyAnalysisResult.summary_report}`;
+          if (rawLang === "bn") {
+            market_summary = `দুগ্ধ খাত ম্যাক্রো-জনমিতি ও বাজার ব্যবধান রিপোর্ট:
+১. মূল্যের সুযোগ: স্থানীয় দুধ সংগ্রহের হার (₹${dairyAnalysisResult.local_sourcing_price.toFixed(2)}/কেজি) জাতীয় পাইকারি গড় (₹${dairyAnalysisResult.nat_wholesale_avg.toFixed(2)}/কেজি) এর চেয়ে কম, যা লাভজনক ব্যবধান প্রদান করে।
+২. কৃষক B2B লক্ষ্য: জেলায় ${dairyAnalysisResult.agri_workers.toLocaleString("en-IN")} জন কৃষি শ্রমিক রয়েছে। গোখাদ্য ও সম্পূরক বিক্রয় করে বাড়তি আয় তৈরি করুন।
+৩. বাজার আকার: জেলার মোট জনসংখ্যা (${dairyAnalysisResult.dist_population.toLocaleString("en-IN")}) দ্বারা প্রমাণিত যে উৎপাদন ও ঋণের কিস্তি সহজেই সমন্বয় করা সম্ভব।`;
+          } else if (rawLang === "mr") {
+            market_summary = `दुग्ध व्यवसाय मॅक्रो-डेमोग्राफिक्स व बाजार अंतर अहवाल:
+1. दर फरक: स्थानिक दुधाचा खरेदी दर (₹${dairyAnalysisResult.local_sourcing_price.toFixed(2)}/किलो) राष्ट्रीय घाऊक सरासरीपेक्षा (₹${dairyAnalysisResult.nat_wholesale_avg.toFixed(2)}/किलो) कमी असल्याने चांगला नफा उपलब्ध आहे.
+2. शेतकरी B2B उद्दिष्ट: जिल्ह्यात ${dairyAnalysisResult.agri_workers.toLocaleString("en-IN")} शेतमजूर आहेत. पशुखाद्य व पूरक आहार पुरवून अतिरिक्त उत्पन्न मिळवा.
+3. बाजार आकार: जिल्ह्याची एकूण लोकसंख्या (${dairyAnalysisResult.dist_population.toLocaleString("en-IN")}) हे सिद्ध करते की उत्पादनाची विक्री व बँकेचा हप्ता सहजपणे भरता येईल.`;
+          } else if (rawLang === "te") {
+            market_summary = `డైరీ రంగం స్థూల జనాభా & మార్కెట్ అంతరం నివేదిక:
+1. ధర వ్యత్యాసం: స్థానిక పాల సేకరణ ధర (₹${dairyAnalysisResult.local_sourcing_price.toFixed(2)}/కిలో) జాతీయ సగటు కంటే తక్కువగా ఉండటం వల్ల మంచి లాభం లభిస్తుంది.
+2. రైతు B2B లక్ష్యం: జిల్లాలో ${dairyAnalysisResult.agri_workers.toLocaleString("en-IN")} వ్యవసాయ కార్మికులు ఉన్నారు. పశుగ్రాసం, దాణా విక్రయాల ద్వారా అదనపు ఆదాయం పొందవచ్చు.
+3. మార్కెట్ పరిమాణం: జిల్లా జనాభా (${dairyAnalysisResult.dist_population.toLocaleString("en-IN")}) ద్వారా ఉత్పత్తి అమ్మకాలు మరియు బ్యాంక్ EMI సులభంగా భరించవచ్చని రుజువవుతోంది.`;
+          } else if (rawLang === "ta") {
+            market_summary = `பால் பண்ணை துறை மேக்ரோ-மக்கள்தொகை & சந்தை இடைவெளி அறிக்கை:
+1. விலை வேறுபாடு: உள்ளூர் பால் கொள்முதல் விலை (₹${dairyAnalysisResult.local_sourcing_price.toFixed(2)}/கிலோ) தேசிய மொத்த விலையை விட குறைவாக இருப்பதால் நல்ல லாபம் கிடைக்கும்.
+2. விவசாயி B2B இலக்கு: மாவட்டத்தில் ${dairyAnalysisResult.agri_workers.toLocaleString("en-IN")} விவசாயத் தொழிலாளர்கள் உள்ளனர். கால்நடை தீவனம் விற்பனை செய்வதன் மூலம் கூடுதல் வருமானம் ஈட்டலாம்.
+3. சந்தை அளவு: மாவட்ட மக்கள்தொகை (${dairyAnalysisResult.dist_population.toLocaleString("en-IN")}) உற்பத்தியை விற்று வங்கி தவணையை எளிதாக செலுத்த முடியும் என்பதை உறுதி செய்கிறது.`;
+          } else if (rawLang === "hi") {
+            market_summary = `${dairyAnalysisResult.summary_report_hi}`;
+          } else {
+            market_summary = `${dairyAnalysisResult.summary_report}`;
+          }
         } else {
-          market_summary =
-            rawLang === "hi"
-              ? `स्थानीय बाज़ार में ${business_category} के लिए नियमित उपभोक्ता माँग का अनुमान लगाया गया है। इस क्षेत्र में सफलता मुख्य रूप से उचित मूल्य निर्धारण और ग्राहकों के विश्वास पर निर्भर करेगी। सरकारी लोन योजना (${schemeRoute}) के तहत पात्रता एक प्रारंभिक स्क्रीनिंग है जिसकी अंतिम स्वीकृति बैंक सत्यापन पर निर्भर है।\n\nग्राहकों का विश्वास तेज़ी से बनाने के लिए पहले दिन से ही उत्पाद की गुणवत्ता और समय पर सेवा पर विशेष ध्यान दें। नज़दीकी परिवारों व स्थानीय दुकानदारों से सीधा संपर्क रखें और बाज़ार में अपनी नियमित उपस्थिति दर्ज कराएं।`
-              : `There is steady daily demand potential for ${business_category} across ${locationLabel}. Business viability will depend heavily on maintaining competitive pricing and building direct community trust. Note that government scheme (${schemeRoute}) alignment is a preliminary screening and final sanction depends on bank appraisal.\n\nTo build initial customer loyalty, focus on consistent product purity and transparent dealings rather than relying solely on foot traffic. Cultivating direct relationships with local families and neighborhood stores will generate reliable repeat business.`;
+          switch (rawLang) {
+            case "bn":
+              market_summary = `স্থানীয় বাজারে ${business_category} ব্যবসার জন্য নিয়মিত ভোক্তা চাহিদা রয়েছে। এই অঞ্চলে সাফল্য প্রধানত সঠিক মূল্য নির্ধারণ এবং গ্রাহকদের আস্থার ওপর নির্ভর করবে। সরকারি ঋণ প্রকল্প (${schemeRoute}) এর আওতায় যোগ্যতা একটি প্রাথমিক পর্যালোচনা যার চূড়ান্ত অনুমোদন ব্যাংক যাচাইয়ের ওপর নির্ভরশীল।\n\nগ্রাহকদের বিশ্বাস দ্রুত অর্জন করতে প্রথম দিন থেকেই পণ্যের মান ও সঠিক সেবায় জোর দিন। আশেপাশের পরিবার ও দোকানদারদের সাথে সরাসরি যোগাযোগ রাখুন এবং বাজারে নিয়মিত উপস্থিতি নিশ্চিত করুন।`;
+              break;
+            case "mr":
+              market_summary = `स्थानिक बाजारपेठेत ${business_category} साठी नियमित ग्राहक मागणी अपेक्षित आहे. या भागात यश प्रामुख्याने योग्य दर व ग्राहकांचा विश्वास यावर अवलंबून असेल. सरकारी कर्ज योजनेअंतर्गत (${schemeRoute}) पात्रता ही प्राथमिक तपासणी असून अंतिम मंजुरी बँकेच्या पडताळणीवर अवलंबून आहे.\n\nग्राहकांचा विश्वास संपादन करण्यासाठी पहिल्या दिवसापासून गुणवत्तेवर भर द्या. स्थानिक कुटुंबे व दुकानदारांशी थेट संबंध ठेवा आणि बाजारात नियमित उपस्थिती राखा.`;
+              break;
+            case "te":
+              market_summary = `స్థానిక మార్కెట్‌లో ${business_category} కోసం స్థిరమైన డిమాండ్ ఉంది. సరసమైన ధరలు మరియు కస్టమర్ల నమ్మకం వ్యాపార విజయానికి కీలకం. ప్రభుత్వ రుణ పథకం (${schemeRoute}) కింద అర్హత ప్రాథమికమైనది మరియు తుది మంజూరు బ్యాంక్ పరిశీలనపై ఆధారపడి ఉంటుంది.\n\nకస్టమర్ల విశ్వాసాన్ని త్వరగా పొందడానికి నాణ్యమైన ఉత్పత్తులను అందించండి. స్థానిక కుటుంబాలతో నేరుగా సంబంధాలు కొనసాగించండి.`;
+              break;
+            case "ta":
+              market_summary = `உள்ளூர் சந்தையில் ${business_category} தொழிலுக்கு நிலையான நுகர்வோர் தேவை உள்ளது. நியாயமான விலை மற்றும் வாடிக்கையாளர் நம்பிக்கை ஆகியவை வெற்றிக்கு முக்கியம். அரசு கடன் திட்டம் (${schemeRoute}) கீழ் தகுதி என்பது முதற்கட்ட சரிபார்ப்பு மட்டுமே, இறுதி ஒப்புதல் வங்கி ஆய்வுக்கு உட்பட்டது.\n\nவாடிக்கையாளர் நம்பிக்கையை விரைவாகப் பெற தரமான தயாரிப்புகளை வழங்குங்கள். உள்ளூர் குடும்பங்களுடன் நேரடி தொடர்பை பேணுங்கள்.`;
+              break;
+            case "hi":
+              market_summary = `स्थानीय बाज़ार में ${business_category} के लिए नियमित उपभोक्ता माँग का अनुमान लगाया गया है। इस क्षेत्र में सफलता मुख्य रूप से उचित मूल्य निर्धारण और ग्राहकों के विश्वास पर निर्भर करेगी। सरकारी लोन योजना (${schemeRoute}) के तहत पात्रता एक प्रारंभिक स्क्रीनिंग है जिसकी अंतिम स्वीकृति बैंक सत्यापन पर निर्भर है।\n\nग्राहकों का विश्वास तेज़ी से बनाने के लिए पहले दिन से ही उत्पाद की गुणवत्ता और समय पर सेवा पर विशेष ध्यान दें। नज़दीकी परिवारों व स्थानीय दुकानदारों से सीधा संपर्क रखें और बाज़ार में अपनी नियमित उपस्थिति दर्ज कराएं।`;
+              break;
+            default:
+              market_summary = `There is steady daily demand potential for ${business_category} across ${locationLabel}. Business viability will depend heavily on maintaining competitive pricing and building direct community trust. Note that government scheme (${schemeRoute}) alignment is a preliminary screening and final sanction depends on bank appraisal.\n\nTo build initial customer loyalty, focus on consistent product purity and transparent dealings rather than relying solely on foot traffic. Cultivating direct relationships with local families and neighborhood stores will generate reliable repeat business.`;
+          }
         }
       }
 
@@ -1154,18 +1230,12 @@ LANGUAGE & TONE:
       }
 
       const status = getDbConfigStatus();
-      if (!status.isConfigured) {
-        res.status(503).json({
-          success: false,
-          error: "Database is not configured. Please ensure Aiven credentials and CA certificate are set.",
-        });
-        return;
-      }
-
       const saveResult = await saveBusinessComplete(profile, financials, reportPayload);
       res.json({
         success: true,
-        message: "Business profile and financial dossier successfully saved to MySQL.",
+        message: status.isConfigured
+          ? "Business profile and financial dossier successfully saved to MySQL."
+          : "Business profile and financial dossier successfully saved (in-memory mock store).",
         ...saveResult,
       });
     } catch (err: any) {
@@ -1180,15 +1250,6 @@ LANGUAGE & TONE:
   // Retrieve Business History (All saved evaluations in chronological order)
   app.get("/api/business/history", async (req: express.Request, res: express.Response) => {
     try {
-      const status = getDbConfigStatus();
-      if (!status.isConfigured) {
-        res.status(503).json({
-          success: false,
-          error: "Database is not configured. Please ensure Aiven credentials and CA certificate are set.",
-          evaluations: [],
-        });
-        return;
-      }
 
       const businessName = req.query.businessName as string | undefined;
       const businessIdParam = req.query.businessId ? Number(req.query.businessId) : undefined;

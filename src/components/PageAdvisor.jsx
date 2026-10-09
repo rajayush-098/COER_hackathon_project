@@ -31,6 +31,7 @@ import {
 import { getAdvisorAdvice } from "../advisorLogic";
 import { speakText, stopSpeaking } from "../utils/speech";
 import { API_ROUTES } from "../apiRoutes";
+import { getPageBadge, getUI } from "../utils/translationHelper";
 
 const languageNames = {
   hi: "Hindi",
@@ -838,11 +839,31 @@ When advising the user, actively use the real-time market data. If they ask abou
         <div className="page-header-text">
           <span className="page-badge-pill">
             <Sparkles size={14} style={{ marginRight: "4px" }} />
-            {isHi ? "पेज 10 • AI व्यापार साथी" : "Page 10 • AI Business Advisor"}
+            {getPageBadge("advisor", lang)}
           </span>
-          <h2>{isHi ? "व्यापार सलाहकार से सीधी बातचीत" : "AI Business Mentor & Advisor"}</h2>
+          <h2>
+            {lang === "bn"
+              ? "AI ব্যবসা উপদেষ্টার সাথে সরাসরি কথোপকথন"
+              : lang === "mr"
+              ? "AI व्यवसाय सल्लागाराशी थेट संवाद"
+              : lang === "te"
+              ? "AI వ్యాపార సలహాదారుతో ప్రత్యక్ష సంభాషణ"
+              : lang === "ta"
+              ? "AI வணிக ஆலோசகருடன் நேரடி உரையாடல்"
+              : isHi
+              ? "व्यापार सलाहकार से सीधी बातचीत"
+              : "AI Business Mentor & Advisor"}
+          </h2>
           <p className="page-sub-desc">
-            {isHi
+            {lang === "bn"
+              ? "আপনার প্রকল্পের বাজেট, সরকারি ঋণ প্রকল্প ও লাভ-খরচের তথ্যের ভিত্তিতে ব্যক্তিগত ব্যবসায়িক পরামর্শ।"
+              : lang === "mr"
+              ? "आपल्या प्रकल्प बजेट, सरकारी योजना व नफ्याच्या आकडेवारीवर आधारित वैयक्तिक मार्गदर्शन."
+              : lang === "te"
+              ? "మీ ప్రాజెక్ట్ బడ్జెట్, ప్రభుత్వ పథకాలు మరియు లాభాల వివరాల ఆధారంగా వ్యక్తిగతీకరించిన సలహా."
+              : lang === "ta"
+              ? "உங்கள் திட்ட நிதி, அரசு திட்டம் மற்றும் லாப புள்ளிவிவரங்களின் அடிப்படையிலான வழிகாட்டுதல்."
+              : isHi
               ? "आपके प्रोजेक्ट बजट, सरकारी योजना और मुनाफे के आंकड़ों पर आधारित व्यक्तिगत परामर्श।"
               : "Direct guidance powered by Gemini with full context of your investment, bank loan, and local demand."}
           </p>
@@ -850,8 +871,8 @@ When advising the user, actively use the real-time market data. If they ask abou
 
         <div className="govt-emblem-badge" style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div>
-            <strong>{isHi ? "AI मेंटॉर" : "Gemini AI"}</strong>
-            <small>{isHi ? "सक्रिय व सटीक" : "Context-Aware"}</small>
+            <strong>{lang === "bn" ? "AI উপদেষ্টা" : lang === "mr" ? "AI सल्लागार" : lang === "te" ? "AI సలహాదారు" : lang === "ta" ? "AI ஆலோசகர்" : isHi ? "AI मेंटॉर" : "Gemini AI"}</strong>
+            <small>{lang === "bn" ? "সক্রিয় ও নির্ভুল" : lang === "mr" ? "सक्रिय व अचूक" : lang === "te" ? "ఖచ్చితమైనది" : lang === "ta" ? "துல்லியமானது" : isHi ? "सक्रिय व सटीक" : "Context-Aware"}</small>
           </div>
         </div>
       </div>
@@ -894,7 +915,7 @@ When advising the user, actively use the real-time market data. If they ask abou
               {ctx.businessName} <span style={{ color: "#93c5fd", fontWeight: 500 }}>({ctx.businessType})</span>
             </div>
             <div style={{ fontSize: "12px", color: "#94a3b8" }}>
-              {ctx.block ? `${ctx.block}, ` : ""}{ctx.district}, {ctx.state} • {isHi ? "अनुशंसित योजना:" : "Scheme:"}{" "}
+              {ctx.block ? `${ctx.block}, ` : ""}{ctx.district}, {ctx.state} • {lang === "bn" ? "প্রকল্প:" : lang === "mr" ? "योजना:" : lang === "te" ? "పథకం:" : lang === "ta" ? "திட்டம்:" : isHi ? "अनुशंसित योजना:" : "Scheme:"}{" "}
               <strong style={{ color: "#38bdf8" }}>{ctx.matchedScheme}</strong>
             </div>
           </div>
@@ -902,19 +923,19 @@ When advising the user, actively use the real-time market data. If they ask abou
 
         <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", fontSize: "12px" }}>
           <div style={{ background: "rgba(255,255,255,0.08)", padding: "6px 10px", borderRadius: "6px" }}>
-            <span style={{ color: "#cbd5e1" }}>{isHi ? "मार्जिन:" : "Margin:"}</span>{" "}
+            <span style={{ color: "#cbd5e1" }}>{lang === "bn" ? "নিজস্ব মূলধন:" : lang === "mr" ? "भांडवल:" : lang === "te" ? "స్వంత వాటా:" : lang === "ta" ? "முதலீடு:" : isHi ? "मार्जिन:" : "Margin:"}</span>{" "}
             <strong style={{ color: "#4ade80" }}>
               ₹{formatCurrency ? formatCurrency(ctx.promoterMargin) : ctx.promoterMargin?.toLocaleString("en-IN")}
             </strong>
           </div>
           <div style={{ background: "rgba(255,255,255,0.08)", padding: "6px 10px", borderRadius: "6px" }}>
-            <span style={{ color: "#cbd5e1" }}>{isHi ? "बैंक लोन:" : "Loan:"}</span>{" "}
+            <span style={{ color: "#cbd5e1" }}>{lang === "bn" ? "ব্যাংক ঋণ:" : lang === "mr" ? "बँक कर्ज:" : lang === "te" ? "బ్యాంక్ రుణం:" : lang === "ta" ? "வங்கி கடன்:" : isHi ? "बैंक लोन:" : "Loan:"}</span>{" "}
             <strong style={{ color: "#60a5fa" }}>
               ₹{formatCurrency ? formatCurrency(ctx.eligibleLoan) : ctx.eligibleLoan?.toLocaleString("en-IN")}
             </strong>
           </div>
           <div style={{ background: "rgba(255,255,255,0.08)", padding: "6px 10px", borderRadius: "6px" }}>
-            <span style={{ color: "#cbd5e1" }}>{isHi ? "मासिक EMI:" : "EMI:"}</span>{" "}
+            <span style={{ color: "#cbd5e1" }}>{lang === "bn" ? "মাসিক কিস্তি:" : lang === "mr" ? "मासिक हप्ता:" : lang === "te" ? "నెలవారీ EMI:" : lang === "ta" ? "மாத தவணை:" : isHi ? "मासिक EMI:" : "EMI:"}</span>{" "}
             <strong style={{ color: "#facc15" }}>
               ₹{formatCurrency ? formatCurrency(ctx.monthlyEmi) : ctx.monthlyEmi?.toLocaleString("en-IN")}
             </strong>
@@ -946,10 +967,22 @@ When advising the user, actively use the real-time market data. If they ask abou
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <ShieldCheck size={16} style={{ color: "#0284c7" }} />
             <span style={{ fontWeight: 700, color: "#1e293b", fontSize: "12.5px" }}>
-              {isHi ? "वित्तीय मान्यताएं व डेटा स्रोत (Data Provenance)" : "Financial Assumptions & Data Provenance"}
+              {lang === "bn"
+                ? "আর্থিক অনুমান ও তথ্যের উৎস (Data Provenance)"
+                : lang === "mr"
+                ? "आर्थिक गृहीतके व डेटा स्रोत (Data Provenance)"
+                : lang === "te"
+                ? "ఆర్థిక అంచనాలు & డేటా మూలాలు (Data Provenance)"
+                : lang === "ta"
+                ? "நிதி அனுமானங்கள் & தரவு மூலங்கள் (Data Provenance)"
+                : isHi
+                ? "वित्तीय मान्यताएं व डेटा स्रोत (Data Provenance)"
+                : "Financial Assumptions & Data Provenance"}
             </span>
             <span style={{ fontSize: "11px", color: "#64748b", background: "#f1f5f9", padding: "2px 6px", borderRadius: "4px" }}>
-              {showAssumptions ? (isHi ? "छिपाएं" : "Collapse") : (isHi ? "विवरण देखें" : "View Details")}
+              {showAssumptions
+                ? (lang === "bn" ? "লুকান" : lang === "mr" ? "लपवा" : lang === "te" ? "దాచండి" : lang === "ta" ? "மறைக்கவும்" : isHi ? "छिपाएं" : "Collapse")
+                : (lang === "bn" ? "বিস্তারিত দেখুন" : lang === "mr" ? "तपशील पहा" : lang === "te" ? "వివరాలు చూడండి" : lang === "ta" ? "விவரங்களைப் பார்க்கவும்" : isHi ? "विवरण देखें" : "View Details")}
             </span>
           </div>
           <button
@@ -969,10 +1002,33 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #dcfce7" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#15803d", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                     <CheckCircle2 size={13} />
-                    <span>{isHi ? "उपयोगकर्ता द्वारा दर्ज" : "User Provided"}</span>
+                    <span>
+                      {lang === "bn"
+                        ? "ব্যবহারকারীর তথ্য"
+                        : lang === "mr"
+                        ? "वापरकर्त्याने नोंदवलेले"
+                        : lang === "te"
+                        ? "వినియోగదారు అందించిన వివరాలు"
+                        : lang === "ta"
+                        ? "பயனர் வழங்கிய விவரங்கள்"
+                        : isHi
+                        ? "उपयोगकर्ता द्वारा दर्ज"
+                        : "User Provided"}
+                    </span>
                   </div>
                   <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                    {isHi ? "अनुमानित मासिक बिक्री:" : "Expected Monthly Sales:"} ₹{formatCurrency ? formatCurrency(ctx.monthlyRevenue) : Number(ctx.monthlyRevenue).toLocaleString("en-IN")}
+                    {lang === "bn"
+                      ? "আনুমানিক মাসিক বিক্রয়:"
+                      : lang === "mr"
+                      ? "अंदाजित मासिक विक्री:"
+                      : lang === "te"
+                      ? "అంచనా వేసిన నెలవారీ అమ్మకాలు:"
+                      : lang === "ta"
+                      ? "எதிர்பார்க்கப்படும் மாதாந்திர விற்பனை:"
+                      : isHi
+                      ? "अनुमानित मासिक बिक्री:"
+                      : "Expected Monthly Sales:"}{" "}
+                    ₹{formatCurrency ? formatCurrency(ctx.monthlyRevenue) : Number(ctx.monthlyRevenue).toLocaleString("en-IN")}
                   </div>
                 </div>
               )}
@@ -981,10 +1037,33 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #dcfce7" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#15803d", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                     <CheckCircle2 size={13} />
-                    <span>{isHi ? "उपयोगकर्ता द्वारा दर्ज" : "User Provided"}</span>
+                    <span>
+                      {lang === "bn"
+                        ? "ব্যবহারকারীর তথ্য"
+                        : lang === "mr"
+                        ? "वापरकर्त्याने नोंदवलेले"
+                        : lang === "te"
+                        ? "వినియోగదారు అందించిన వివరాలు"
+                        : lang === "ta"
+                        ? "பயனர் வழங்கிய விவரங்கள்"
+                        : isHi
+                        ? "उपयोगकर्ता द्वारा दर्ज"
+                        : "User Provided"}
+                    </span>
                   </div>
                   <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                    {isHi ? "मासिक परिचालन खर्च:" : "Monthly Operating Cost:"} ₹{formatCurrency ? formatCurrency(ctx.monthlyExpenses) : Number(ctx.monthlyExpenses).toLocaleString("en-IN")}
+                    {lang === "bn"
+                      ? "মাসিক পরিচালনা ব্যয়:"
+                      : lang === "mr"
+                      ? "मासिक परिचालन खर्च:"
+                      : lang === "te"
+                      ? "నెలవారీ నిర్వహణ ఖర్చు:"
+                      : lang === "ta"
+                      ? "மாதாந்திர செயல்பாட்டுச் செலவு:"
+                      : isHi
+                      ? "मासिक परिचालन खर्च:"
+                      : "Monthly Operating Cost:"}{" "}
+                    ₹{formatCurrency ? formatCurrency(ctx.monthlyExpenses) : Number(ctx.monthlyExpenses).toLocaleString("en-IN")}
                   </div>
                 </div>
               )}
@@ -993,10 +1072,33 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #dcfce7" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#15803d", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                     <CheckCircle2 size={13} />
-                    <span>{isHi ? "उपयोगकर्ता द्वारा दर्ज" : "User Provided"}</span>
+                    <span>
+                      {lang === "bn"
+                        ? "ব্যবহারকারীর তথ্য"
+                        : lang === "mr"
+                        ? "वापरकर्त्याने नोंदवलेले"
+                        : lang === "te"
+                        ? "వినియోగదారు అందించిన వివరాలు"
+                        : lang === "ta"
+                        ? "பயனர் வழங்கிய விவரங்கள்"
+                        : isHi
+                        ? "उपयोगकर्ता द्वारा दर्ज"
+                        : "User Provided"}
+                    </span>
                   </div>
                   <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                    {isHi ? "उपलब्ध मार्जिन पूँजी:" : "Available Margin Capital:"} ₹{formatCurrency ? formatCurrency(ctx.promoterMargin) : Number(ctx.promoterMargin).toLocaleString("en-IN")}
+                    {lang === "bn"
+                      ? "উপলব্ধ নিজস্ব পুঁজি:"
+                      : lang === "mr"
+                      ? "उपलब्ध स्वतःचे भांडवल:"
+                      : lang === "te"
+                      ? "అందుబాటులో ఉన్న సొంత పెట్టుబడి:"
+                      : lang === "ta"
+                      ? "கிடைக்கும் சொந்த மூலதனம்:"
+                      : isHi
+                      ? "उपलब्ध मार्जिन पूँजी:"
+                      : "Available Margin Capital:"}{" "}
+                    ₹{formatCurrency ? formatCurrency(ctx.promoterMargin) : Number(ctx.promoterMargin).toLocaleString("en-IN")}
                   </div>
                 </div>
               )}
@@ -1006,13 +1108,46 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #dbeafe" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#1d4ed8", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                     <Calculator size={13} />
-                    <span>{isHi ? "गणना की गई (Calculated)" : "Calculated"}</span>
+                    <span>
+                      {lang === "bn"
+                        ? "গণনাকৃত (Calculated)"
+                        : lang === "mr"
+                        ? "गणना केलेले (Calculated)"
+                        : lang === "te"
+                        ? "లెక్కించబడినది (Calculated)"
+                        : lang === "ta"
+                        ? "கணக்கிடப்பட்டது (Calculated)"
+                        : isHi
+                        ? "गणना की गई (Calculated)"
+                        : "Calculated"}
+                    </span>
                   </div>
                   <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                    {isHi ? "मासिक बैंक किश्त (EMI):" : "Monthly EMI:"} ₹{formatCurrency ? formatCurrency(ctx.monthlyEmi) : Number(ctx.monthlyEmi).toLocaleString("en-IN")}
+                    {lang === "bn"
+                      ? "মাসিক ব্যাংক কিস্তি (EMI):"
+                      : lang === "mr"
+                      ? "मासिक बँक हप्ता (EMI):"
+                      : lang === "te"
+                      ? "నెలవారీ బ్యాంక్ వాయిదా (EMI):"
+                      : lang === "ta"
+                      ? "மாதாந்திர வங்கி தவணை (EMI):"
+                      : isHi
+                      ? "मासिक बैंक किश्त (EMI):"
+                      : "Monthly EMI:"}{" "}
+                    ₹{formatCurrency ? formatCurrency(ctx.monthlyEmi) : Number(ctx.monthlyEmi).toLocaleString("en-IN")}
                   </div>
                   <div style={{ fontSize: "11px", color: "#64748b" }}>
-                    {isHi ? "घटते मूलधन (Reducing-balance) फॉर्मूले से" : "Computed via standard reducing-balance"}
+                    {lang === "bn"
+                      ? "হ্রাসমান আসল ভিত্তিতে হিসাবকৃত"
+                      : lang === "mr"
+                      ? "कमी होणाऱ्या मुद्दलाच्या सूत्राने"
+                      : lang === "te"
+                      ? "తగ్గుతున్న అసలు సూత్రం ఆధారంగా"
+                      : lang === "ta"
+                      ? "குறையும் அசல் சூத்திரத்தின்படி கணக்கிடப்பட்டது"
+                      : isHi
+                      ? "घटते मूलधन (Reducing-balance) फॉर्मूले से"
+                      : "Computed via standard reducing-balance"}
                   </div>
                 </div>
               )}
@@ -1021,13 +1156,46 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #dbeafe" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#1d4ed8", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                     <Calculator size={13} />
-                    <span>{isHi ? "गणना की गई (Calculated)" : "Calculated"}</span>
+                    <span>
+                      {lang === "bn"
+                        ? "গণনাকৃত (Calculated)"
+                        : lang === "mr"
+                        ? "गणना केलेले (Calculated)"
+                        : lang === "te"
+                        ? "లెక్కించబడినది (Calculated)"
+                        : lang === "ta"
+                        ? "கணக்கிடப்பட்டது (Calculated)"
+                        : isHi
+                        ? "गणना की गई (Calculated)"
+                        : "Calculated"}
+                    </span>
                   </div>
                   <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                    {isHi ? "कुल प्रोजेक्ट लागत:" : "Total Project Cost:"} ₹{formatCurrency ? formatCurrency(ctx.totalProjectCost) : Number(ctx.totalProjectCost).toLocaleString("en-IN")}
+                    {lang === "bn"
+                      ? "মোট প্রকল্প ব্যয়:"
+                      : lang === "mr"
+                      ? "एकूण प्रकल्प खर्च:"
+                      : lang === "te"
+                      ? "మొత్తం ప్రాజెక్ట్ వ్యయం:"
+                      : lang === "ta"
+                      ? "மொத்த திட்டச் செலவு:"
+                      : isHi
+                      ? "कुल प्रोजेक्ट लागत:"
+                      : "Total Project Cost:"}{" "}
+                    ₹{formatCurrency ? formatCurrency(ctx.totalProjectCost) : Number(ctx.totalProjectCost).toLocaleString("en-IN")}
                   </div>
                   <div style={{ fontSize: "11px", color: "#64748b" }}>
-                    {isHi ? "10% मार्जिन पूँजी आवश्यकता के आधार पर" : "Derived from 10% promoter equity rule"}
+                    {lang === "bn"
+                      ? "১০% নিজস্ব মার্জিন অনুমানের ওপর ভিত্তি করে"
+                      : lang === "mr"
+                      ? "10% भांडवल आवश्यकतेवर आधारित"
+                      : lang === "te"
+                      ? "10% సొంత వాటా నిబంధనపై ఆధారపడి"
+                      : lang === "ta"
+                      ? "10% சொந்த முதலீட்டு விதியின் அடிப்படையில்"
+                      : isHi
+                      ? "10% मार्जिन पूँजी आवश्यकता के आधार पर"
+                      : "Derived from 10% promoter equity rule"}
                   </div>
                 </div>
               )}
@@ -1036,26 +1204,92 @@ When advising the user, actively use the real-time market data. If they ask abou
               <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #fef3c7" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#b45309", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                   <AlertTriangle size={13} />
-                  <span>{isHi ? "मान्यता (Assumed)" : "Assumed for Illustration"}</span>
+                  <span>
+                    {lang === "bn"
+                      ? "অনুমান (Assumed)"
+                      : lang === "mr"
+                      ? "गृहीतक (Assumed)"
+                      : lang === "te"
+                      ? "అంచనా (Assumed)"
+                      : lang === "ta"
+                      ? "அனுமானம் (Assumed)"
+                      : isHi
+                      ? "मान्यता (Assumed)"
+                      : "Assumed for Illustration"}
+                  </span>
                 </div>
                 <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                  {isHi ? "ब्याज दर:" : "Interest Rate:"} {ctx.interestRate ? `${ctx.interestRate}%` : "6.5% - 8.0%"}
+                  {lang === "bn"
+                    ? "সুদের হার:"
+                    : lang === "mr"
+                    ? "व्याज दर:"
+                    : lang === "te"
+                    ? "వడ్డీ రేటు:"
+                    : lang === "ta"
+                    ? "வட்டி விகிதம்:"
+                    : isHi
+                    ? "ब्याज दर:"
+                    : "Interest Rate:"}{" "}
+                  {ctx.interestRate ? `${ctx.interestRate}%` : "6.5% - 8.0%"}
                 </div>
                 <div style={{ fontSize: "11px", color: "#64748b" }}>
-                  {isHi ? "बैंक के वास्तविक नियम व क्रेडिट स्कोर पर निर्भर" : "Benchmark figure; final bank sanction terms may differ"}
+                  {lang === "bn"
+                    ? "ব্যাংকের নিয়ম ও ক্রেডিট স্কোরের ওপর নির্ভরশীল"
+                    : lang === "mr"
+                    ? "बँकेचे नियम व सिबिल स्कोअरवर अवलंबून"
+                    : lang === "te"
+                    ? "బ్యాంకు నిబంధనలు మరియు క్రెడిట్ స్కోర్‌పై ఆధారపడి ఉంటుంది"
+                    : lang === "ta"
+                    ? "வங்கி விதிமுறைகள் மற்றும் கிரெடிட் ஸ்கோரைப் பொறுத்தது"
+                    : isHi
+                    ? "बैंक के वास्तविक नियम व क्रेडिट स्कोर पर निर्भर"
+                    : "Benchmark figure; final bank sanction terms may differ"}
                 </div>
               </div>
 
               <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #fef3c7" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#b45309", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                   <AlertTriangle size={13} />
-                  <span>{isHi ? "मान्यता (Assumed)" : "Assumed for Illustration"}</span>
+                  <span>
+                    {lang === "bn"
+                      ? "অনুমান (Assumed)"
+                      : lang === "mr"
+                      ? "गृहीतक (Assumed)"
+                      : lang === "te"
+                      ? "అంచనా (Assumed)"
+                      : lang === "ta"
+                      ? "அனுமானம் (Assumed)"
+                      : isHi
+                      ? "मान्यता (Assumed)"
+                      : "Assumed for Illustration"}
+                  </span>
                 </div>
                 <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
-                  {isHi ? "अवधि व मोराटोरियम:" : "Tenure & Moratorium:"} {ctx.loanTenureMonths ? `${ctx.loanTenureMonths} माह` : "36-84 माह"} ({ctx.moratoriumMonths != null ? `${ctx.moratoriumMonths} माह मोराटोरियम` : "3-6 माह मोराटोरियम"})
+                  {lang === "bn"
+                    ? "মেয়াদ ও গ্রেস পিরিয়ড:"
+                    : lang === "mr"
+                    ? "मुदत व सवलत कालावधी:"
+                    : lang === "te"
+                    ? "కాలపరిమితి & మారటోరియం:"
+                    : lang === "ta"
+                    ? "கால அளவு & அவகாசம்:"
+                    : isHi
+                    ? "अवधि व मोराटोरियम:"
+                    : "Tenure & Moratorium:"}{" "}
+                  {ctx.loanTenureMonths ? `${ctx.loanTenureMonths} ${getUI("monthsUnit", lang, "Months")}` : "36-84 Months"}
                 </div>
                 <div style={{ fontSize: "11px", color: "#64748b" }}>
-                  {isHi ? "योजना के मानक नियमों पर आधारित" : "Standard benchmark; subject to sanction letter"}
+                  {lang === "bn"
+                    ? "প্রকল্পের স্ট্যান্ডার্ড নির্দেশিকা অনুযায়ী"
+                    : lang === "mr"
+                    ? "योजनेच्या नियमांनुसार"
+                    : lang === "te"
+                    ? "పథకం మార్గదర్శకాల ప్రకారం"
+                    : lang === "ta"
+                    ? "திட்ட வழிகாட்டுதல்களின்படி"
+                    : isHi
+                    ? "योजना के मानक नियमों पर आधारित"
+                    : "Standard benchmark; subject to sanction letter"}
                 </div>
               </div>
 
@@ -1063,7 +1297,19 @@ When advising the user, actively use the real-time market data. If they ask abou
               <div style={{ background: "#ffffff", padding: "8px 12px", borderRadius: "8px", border: "1px solid #ede9fe" }}>
                 <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#6d28d9", fontWeight: 700, fontSize: "11px", textTransform: "uppercase" }}>
                   <ShieldCheck size={13} />
-                  <span>{isHi ? "सत्यापित डेटा (Verified Dataset)" : "Verified Dataset"}</span>
+                  <span>
+                    {lang === "bn"
+                      ? "যাচাইকৃত ডেটাসেট (Verified Dataset)"
+                      : lang === "mr"
+                      ? "पडताळलेला डेटा (Verified Dataset)"
+                      : lang === "te"
+                      ? "ధృవీకరించబడిన డేటా (Verified Dataset)"
+                      : lang === "ta"
+                      ? "சரிபார்க்கப்பட்ட தரவு (Verified Dataset)"
+                      : isHi
+                      ? "सत्यापित डेटा (Verified Dataset)"
+                      : "Verified Dataset"}
+                  </span>
                 </div>
                 <div style={{ marginTop: "3px", color: "#1e293b", fontWeight: 600 }}>
                   {ctx.matchedScheme}
@@ -1082,7 +1328,19 @@ When advising the user, actively use the real-time market data. If they ask abou
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", fontWeight: 700, color: "#334155" }}>
             <HelpCircle size={15} style={{ color: "#2563eb" }} />
-            <span>{isHi ? "सुझाए गए प्रमुख सवाल (एक क्लिक में पूछें):" : "Suggested Quick Prompts (Click to ask):"}</span>
+            <span>
+              {lang === "bn"
+                ? "প্রস্তাবিত জরুরি প্রশ্নসমূহ (এক ক্লিকে জিজ্ঞাসা করুন):"
+                : lang === "mr"
+                ? "सुचवलेले महत्त्वाचे प्रश्न (एका क्लिकवर विचारा):"
+                : lang === "te"
+                ? "సూచించిన ముఖ్యాంశాలు (ఒక్క క్లిక్‌తో అడగండి):"
+                : lang === "ta"
+                ? "பரிந்துரைக்கப்பட்ட விரைவு கேள்விகள் (ஒரே கிளிக்கில் கேளுங்கள்):"
+                : isHi
+                ? "सुझाए गए प्रमुख सवाल (एक क्लिक में पूछें):"
+                : "Suggested Quick Prompts (Click to ask):"}
+            </span>
           </div>
           <button
             type="button"
@@ -1099,10 +1357,10 @@ When advising the user, actively use the real-time market data. If they ask abou
               padding: "2px 6px",
               borderRadius: "4px",
             }}
-            title={isHi ? "चैट साफ़ करें" : "Reset Chat"}
+            title={lang === "bn" ? "নতুন চ্যাট" : lang === "mr" ? "नवीन प्रश्न" : isHi ? "नया सवाल" : "Reset Chat"}
           >
             <RotateCcw size={13} />
-            <span>{isHi ? "नया सवाल" : "Clear Chat"}</span>
+            <span>{lang === "bn" ? "নতুন চ্যাট" : lang === "mr" ? "नवीन प्रश्न" : isHi ? "नया सवाल" : "Clear Chat"}</span>
           </button>
         </div>
 
@@ -1405,7 +1663,19 @@ When advising the user, actively use the real-time market data. If they ask abou
                 {isUser ? (
                   <>
                     <span>{msg.timestamp}</span>
-                    <strong style={{ color: "#334155" }}>{isHi ? "आप" : "You"}</strong>
+                    <strong style={{ color: "#334155" }}>
+                      {lang === "bn"
+                        ? "আপনি"
+                        : lang === "mr"
+                        ? "तुम्ही"
+                        : lang === "te"
+                        ? "మీరు"
+                        : lang === "ta"
+                        ? "நீங்கள்"
+                        : isHi
+                        ? "आप"
+                        : "You"}
+                    </strong>
                     <div
                       style={{
                         width: "18px",
@@ -1436,7 +1706,17 @@ When advising the user, actively use the real-time market data. If they ask abou
                       <Bot size={11} color="#ffffff" />
                     </div>
                     <strong style={{ color: "#059669" }}>
-                      {isHi ? "AI व्यापार सलाहकार" : "AI Business Mentor"}
+                      {lang === "bn"
+                        ? "AI ব্যবসা উপদেষ্টা"
+                        : lang === "mr"
+                        ? "AI व्यवसाय सल्लागार"
+                        : lang === "te"
+                        ? "AI వ్యాపార సలహాదారు"
+                        : lang === "ta"
+                        ? "AI வணிக ஆலோசகர்"
+                        : isHi
+                        ? "AI व्यापार सलाहकार"
+                        : "AI Business Mentor"}
                     </strong>
                     <span>{msg.timestamp}</span>
                   </>
@@ -1484,7 +1764,17 @@ When advising the user, actively use the real-time market data. If they ask abou
                       <span style={{ animation: "pulse 1s infinite 0.4s" }}>●</span>
                     </div>
                     <span style={{ fontStyle: "italic", fontSize: "13.5px", fontWeight: 600 }}>
-                      Analyzing your numbers...
+                      {lang === "bn"
+                        ? "আপনার হিসাব পর্যালোচনা করা হচ্ছে..."
+                        : lang === "mr"
+                        ? "आपल्या आकडेवारीचे विश्लेषण करत आहे..."
+                        : lang === "te"
+                        ? "మీ గణాంకాలను విశ్లేషిస్తోంది..."
+                        : lang === "ta"
+                        ? "உங்கள் புள்ளிவிவரங்கள் ஆய்வு செய்யப்படுகின்றன..."
+                        : isHi
+                        ? "आपके आंकड़ों का विश्लेषण हो रहा है..."
+                        : "Analyzing your numbers..."}
                     </span>
                   </div>
                 ) : (
@@ -1526,12 +1816,36 @@ When advising the user, actively use the real-time market data. If they ask abou
                       {speakingId === msg.id ? (
                         <>
                           <VolumeX size={13} />
-                          <span>{isHi ? "आवाज़ रोकें" : "Stop"}</span>
+                          <span>
+                            {lang === "bn"
+                              ? "আওয়াজ বন্ধ করুন"
+                              : lang === "mr"
+                              ? "आवाज थांबवा"
+                              : lang === "te"
+                              ? "వాయిస్ ఆపండి"
+                              : lang === "ta"
+                              ? "குரலை நிறுத்து"
+                              : isHi
+                              ? "आवाज़ रोकें"
+                              : "Stop"}
+                          </span>
                         </>
                       ) : (
                         <>
                           <Volume2 size={13} />
-                          <span>{isHi ? "बोलकर सुनें" : "Listen"}</span>
+                          <span>
+                            {lang === "bn"
+                              ? "শুনে নিন"
+                              : lang === "mr"
+                              ? "ऐका"
+                              : lang === "te"
+                              ? "వినండి"
+                              : lang === "ta"
+                              ? "கேளுங்கள்"
+                              : isHi
+                              ? "बोलकर सुनें"
+                              : "Listen"}
+                          </span>
                         </>
                       )}
                     </button>
@@ -1557,12 +1871,36 @@ When advising the user, actively use the real-time market data. If they ask abou
                       {copiedId === msg.id ? (
                         <>
                           <Check size={12} color="#16a34a" />
-                          <span style={{ color: "#16a34a" }}>{isHi ? "कॉपी हो गया" : "Copied"}</span>
+                          <span style={{ color: "#16a34a" }}>
+                            {lang === "bn"
+                              ? "কপি হয়েছে"
+                              : lang === "mr"
+                              ? "कॉपी झाले"
+                              : lang === "te"
+                              ? "కాపీ చేయబడింది"
+                              : lang === "ta"
+                              ? "நகலெடுக்கப்பட்டது"
+                              : isHi
+                              ? "कॉपी हो गया"
+                              : "Copied"}
+                          </span>
                         </>
                       ) : (
                         <>
                           <Copy size={12} />
-                          <span>{isHi ? "कॉपी करें" : "Copy"}</span>
+                          <span>
+                            {lang === "bn"
+                              ? "কপি করুন"
+                              : lang === "mr"
+                              ? "कॉपी करा"
+                              : lang === "te"
+                              ? "కాపీ చేయండి"
+                              : lang === "ta"
+                              ? "நகலெடு"
+                              : isHi
+                              ? "कॉपी करें"
+                              : "Copy"}
+                          </span>
                         </>
                       )}
                     </button>
@@ -1607,9 +1945,25 @@ When advising the user, actively use the real-time market data. If they ask abou
           }}
           placeholder={
             isVoiceMode
-              ? isHi
+              ? lang === "bn"
+                ? "🎙️ ভয়েস মোড সক্রিয়... আপনার প্রশ্ন বলুন (AI শুনে স্বয়ংক্রিয়ভাবে উত্তর দেবে)..."
+                : lang === "mr"
+                ? "🎙️ व्हॉइस मोड सुरू आहे... आपला प्रश्न बोला (AI ऐकून उत्तर देईल व बोलेल)..."
+                : lang === "te"
+                ? "🎙️ వాయిస్ మోడ్ యాక్టివ్... మీ ప్రశ్న మాట్లాడండి (AI విని సమాధానం చెబుతుంది)..."
+                : lang === "ta"
+                ? "🎙️ குரல் முறை செயலில் உள்ளது... உங்கள் கேள்வியைப் பேசுங்கள்..."
+                : isHi
                 ? "🎙️ वॉयस मोड चालू है... अपना सवाल बोलें (AI सुनकर जवाब देगा और बोलेगा)..."
                 : "🎙️ Voice Mode Active... Speak your question (AI answers and speaks automatically)..."
+              : lang === "bn"
+              ? "এখানে আপনার ব্যবসা সম্পর্কিত যেকোনো প্রশ্ন লিখুন বা মাইকে বলুন..."
+              : lang === "mr"
+              ? "येथे आपल्या व्यवसायाबद्दल कोणताही प्रश्न लिहा किंवा बोला..."
+              : lang === "te"
+              ? "ఇక్కడ మీ వ్యాపారం గురించి ఏదైనా ప్రశ్న రాయండి లేదా మాట్లాడండి..."
+              : lang === "ta"
+              ? "உங்கள் தொழில் பற்றி ஏதேனும் கேள்வியை இங்கே தட்டச்சு செய்யவும் அல்லது பேசவும்..."
               : isHi
               ? "यहाँ अपने व्यापार के बारे में कोई भी सवाल लिखें या बोलें..."
               : "Ask any question about your numbers (type or click microphone to speak)..."
@@ -1639,24 +1993,44 @@ When advising the user, actively use the real-time market data. If they ask abou
             disabled={loading || !isSpeechSupported}
             aria-label={
               isVoiceMode
-                ? isHi
+                ? lang === "bn"
+                  ? "ভয়েস বন্ধ করুন"
+                  : lang === "mr"
+                  ? "व्हॉइस संभाषण समाप्त करा"
+                  : isHi
                   ? "वॉयस बातचीत समाप्त करें"
                   : "End voice conversation"
+                : lang === "bn"
+                ? "ভয়েস শুরু করুন"
+                : lang === "mr"
+                ? "व्हॉइस संभाषण सुरू करा"
                 : isHi
                 ? "वॉयस बातचीत शुरू करें"
                 : "Start voice conversation"
             }
             title={
               !isSpeechSupported
-                ? isHi
-                  ? "इस ब्राउज़र में वॉयस इनपुट समर्थित नहीं है। कृपया टाइप करके सवाल पूछें।"
-                  : "Voice input isn't supported in this browser. Please type your question instead."
+                ? lang === "bn"
+                  ? "এই ব্রাউজারে ভয়েস সমর্থিত নয়।"
+                  : lang === "mr"
+                  ? "या ब्राउझरमध्ये व्हॉइस समर्थित नाही."
+                  : isHi
+                  ? "इस ब्राउज़र में वॉयस इनपुट समर्थित नहीं है।"
+                  : "Voice input isn't supported in this browser."
                 : isVoiceMode
-                ? isHi
-                  ? "वॉयस बातचीत बंद करें (Click to end voice conversation)"
+                ? lang === "bn"
+                  ? "ভয়েস কথোপকথন বন্ধ করতে ক্লিক করুন"
+                  : lang === "mr"
+                  ? "व्हॉइस संभाषण थांबवण्यासाठी क्लिक करा"
+                  : isHi
+                  ? "वॉयस बातचीत बंद करें"
                   : "Click to end voice conversation"
+                : lang === "bn"
+                ? "কথা বলে প্রশ্ন জিজ্ঞাসা করুন"
+                : lang === "mr"
+                ? "बोलून प्रश्न विचारा"
                 : isHi
-                ? "बोलकर बातचीत शुरू करें (Start Voice Conversation)"
+                ? "बोलकर बातचीत शुरू करें"
                 : "Start Voice Conversation"
             }
             style={{
@@ -1702,17 +2076,17 @@ When advising the user, actively use the real-time market data. If they ask abou
                 <Square size={13} fill="#DC2626" />
                 <span>
                   {voiceState === "speaking"
-                    ? isHi ? "बोल रहे हैं..." : "Speaking..."
+                    ? lang === "bn" ? "বলছেন..." : lang === "mr" ? "बोलत आहे..." : isHi ? "बोल रहे हैं..." : "Speaking..."
                     : voiceState === "thinking"
-                    ? isHi ? "सोच रहे हैं..." : "Thinking..."
-                    : isHi ? "सुन रहे हैं..." : "Listening..."}
+                    ? lang === "bn" ? "চিন্তা করছেন..." : lang === "mr" ? "विचार करत आहे..." : isHi ? "सोच रहे हैं..." : "Thinking..."
+                    : lang === "bn" ? "শুনছেন..." : lang === "mr" ? "ऐकत आहे..." : isHi ? "सुन रहे हैं..." : "Listening..."}
                 </span>
               </>
             ) : (
               <>
                 <Mic size={17} style={{ opacity: isSpeechSupported ? 1 : 0.5 }} />
                 <span className="hidden sm:inline" style={{ fontSize: "12.5px" }}>
-                  {isHi ? "वॉयस मोड" : "Voice Mode"}
+                  {lang === "bn" ? "ভয়েস মোড" : lang === "mr" ? "व्हॉइस मोड" : lang === "te" ? "వాయిస్ మోడ్" : lang === "ta" ? "குரல் முறை" : isHi ? "वॉयस मोड" : "Voice Mode"}
                 </span>
               </>
             )}
@@ -1751,11 +2125,35 @@ When advising the user, actively use the real-time market data. If they ask abou
                   <span>●</span>
                   <span>●</span>
                 </span>
-                <span>Analyzing your numbers...</span>
+                <span>
+                  {lang === "bn"
+                    ? "হিসাব পর্যালোচনা হচ্ছে..."
+                    : lang === "mr"
+                    ? "आकडेवारी तपासत आहे..."
+                    : lang === "te"
+                    ? "గణాంకాలు విశ్లేషిస్తోంది..."
+                    : lang === "ta"
+                    ? "புள்ளிவிவரங்களை ஆய்வு செய்கிறது..."
+                    : isHi
+                    ? "आंकड़ों का विश्लेषण हो रहा है..."
+                    : "Analyzing your numbers..."}
+                </span>
               </span>
             ) : (
               <>
-                <span>{isHi ? "पूछें" : "Ask"}</span>
+                <span>
+                  {lang === "bn"
+                    ? "জিজ্ঞাসা করুন"
+                    : lang === "mr"
+                    ? "विचारा"
+                    : lang === "te"
+                    ? "అడగండి"
+                    : lang === "ta"
+                    ? "கேளுங்கள்"
+                    : isHi
+                    ? "पूछें"
+                    : "Ask"}
+                </span>
                 <Send size={15} />
               </>
             )}
@@ -1791,7 +2189,11 @@ When advising the user, actively use the real-time market data. If they ask abou
             }}
           />
           <span>
-            {isHi
+            {lang === "bn"
+              ? "🎙️ মাইক্রোফোন সক্রিয়... আপনার প্রশ্ন বলুন (বলা শেষে 'শুনছেন...' বাটনে ক্লিক করে 'জিজ্ঞাসা করুন' চাপুন)"
+              : lang === "mr"
+              ? "🎙️ मायक्रोफोन सक्रिय आहे... आपला प्रश्न बोला"
+              : isHi
               ? "🎙️ माइक्रोफ़ोन सक्रिय है... अपना सवाल बोलें (समाप्त होने पर 'सुन रहे हैं...' बटन दबाएँ, फिर 'पूछें' पर क्लिक करें)"
               : "🎙️ Microphone active... Speak your question (Click 'Listening...' to finish speaking, review/edit, then press Ask)"}
           </span>

@@ -7,6 +7,7 @@ import {
   getUI,
   getPageBadge,
   translateDemand,
+  translateDynamicPhrase,
 } from "../utils/translationHelper";
 
 export default function PageMarket({ 
@@ -292,13 +293,43 @@ export default function PageMarket({
               <li key={idx} className="channel-item">
                 <span className="ch-num">{idx + 1}</span>
                 <div>
-                  <strong>{ch}</strong>
+                  <strong>{translateDynamicPhrase(ch, lang)}</strong>
                   <p>
                     {idx === 0
-                      ? (lang === "bn" ? "দোকান বা খামার থেকে সরাসরি নগদ বিক্রয়, কোনো দালাল ছাড়া।" : isHi ? "दुकान या फार्म से सीधे नकद बिक्री, बिना किसी बिचौलिए के।" : "Direct retail sales to end consumers without middlemen.")
+                      ? (lang === "bn"
+                          ? "দোকান বা খামার থেকে সরাসরি নগদ বিক্রয়, কোনো দালাল ছাড়া।"
+                          : lang === "mr"
+                          ? "दुकान किंवा शेतातून थेट ग्राहकांना रोख विक्री, मध्यस्थांशिवाय."
+                          : lang === "te"
+                          ? "షాప్ లేదా ఫామ్ నుండి దళారులు లేకుండా వినియోగదారులకు ప్రత్యక్ష నగదు అమ్మకాలు."
+                          : lang === "ta"
+                          ? "இடைத்தரகர்கள் இல்லாமல் வாடிக்கையாளர்களுக்கு நேரடியாக விற்பனை."
+                          : isHi
+                          ? "दुकान या फार्म से सीधे नकद बिक्री, बिना किसी बिचौलिए के।"
+                          : "Direct retail sales to end consumers without middlemen.")
                       : idx === 1
-                      ? (lang === "bn" ? "গ্রামের সাপ্তাহিক হাট ও বাজারে স্টল দিয়ে পণ্য বিক্রয়।" : isHi ? "गाँव के साप्ताहिक हाट व पैठ बाज़ार में स्टॉल लगाकर बिक्री।" : "Weekly haat bazaar stalls and community market days.")
-                      : (lang === "bn" ? "নিকটবর্তী হোটেল, মিষ্টির দোকান বা পাইকারদের পাইকারি সরবরাহ।" : isHi ? "नज़दीकी होटल, डेयरी या थोक व्यापारी को बल्क सप्लाई।" : "Bulk supply partnerships with local retailers & eateries.")}
+                      ? (lang === "bn"
+                          ? "গ্রামের সাপ্তাহিক হাট ও বাজারে স্টল দিয়ে পণ্য বিক্রয়।"
+                          : lang === "mr"
+                          ? "गावातील आठवडी बाजार व पेठेत स्टॉल लावून विक्री."
+                          : lang === "te"
+                          ? "గ్రామ వారపు సంతలు మరియు మార్కెట్లలో స్టాల్ ఏర్పాటు చేసి విక్రయించడం."
+                          : lang === "ta"
+                          ? "கிராம வாராந்திர சந்தைகளில் ஸ்டால் அமைத்து விற்பனை."
+                          : isHi
+                          ? "गाँव के साप्ताहिक हाट व पैठ बाज़ार में स्टॉल लगाकर बिक्री।"
+                          : "Weekly haat bazaar stalls and community market days.")
+                      : (lang === "bn"
+                          ? "নিকটবর্তী হোটেল, মিষ্টির দোকান বা পাইকারদের পাইকারি সরবরাহ।"
+                          : lang === "mr"
+                          ? "जवळपासची हॉटेल्स, गोड दुकाने किंवा घाऊक व्यापाऱ्यांना घाऊक पुरवठा."
+                          : lang === "te"
+                          ? "సమీప హోటళ్ళు, స్వీట్ షాపులు లేదా టోకు వ్యాపారులకు హోల్‌సేల్ సరఫరా."
+                          : lang === "ta"
+                          ? "அருகிலுள்ள உணவகங்கள், இனிப்புக் கடைகள் அல்லது மொத்த வியாபாரிகளுக்கு விநியோகம்."
+                          : isHi
+                          ? "नज़दीकी होटल, डेयरी या थोक व्यापारी को बल्क सप्लाई।"
+                          : "Bulk supply partnerships with local retailers & eateries.")}
                   </p>
                 </div>
               </li>
@@ -331,13 +362,19 @@ export default function PageMarket({
               <span>
                 {lang === "bn"
                   ? `মাঠ পর্যায়ের তথ্যের (${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} প্রতিযোগী, ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} ব্যাংক) ভিত্তিতে পরামর্শ প্রস্তুত হচ্ছে...`
+                  : lang === "mr"
+                  ? `स्थानिक डेटाच्या (${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} स्पर्धक, ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} बँका) आधारे सल्ला तयार होत आहे...`
+                  : lang === "te"
+                  ? `క్షేత్ర స్థాయి డేటా (${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} పోటీదారులు, ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} బ్యాంకులు) ఆధారంగా సలహా సిద్ధమవుతోంది...`
+                  : lang === "ta"
+                  ? `கள தரவுகளின் (${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} போட்டியாளர்கள், ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} வங்கிகள்) அடிப்படையில் வழிகாட்டல் தயாராகிறது...`
                   : isHi
                   ? `फ़ील्ड डेटा (${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} प्रतिद्वंदी, ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} बैंक) के आधार पर सलाह तैयार हो रही है...`
                   : `Generating advisory based on ${localMarketData?.competitorsCount ?? (Array.isArray(localMarketData?.competitors) ? localMarketData.competitors.length : (localMarketData?.competitors || 0))} competitors and ${localMarketData?.banksCount ?? (Array.isArray(localMarketData?.banks) ? localMarketData.banks.length : (localMarketData?.banks || 0))} banks...`}
               </span>
             </div>
           ) : (
-            liveAdvisory || (lang === "bn" ? "স্ক্যান সম্পন্ন হলে পরামর্শ এখানে প্রদর্শিত হবে।" : isHi ? "स्कैन पूरा होने पर सलाह यहाँ प्रदर्शित होगी।" : "Advisory will display once scan finishes.")
+            liveAdvisory || (lang === "bn" ? "স্ক্যান সম্পন্ন হলে পরামর্শ এখানে প্রদর্শিত হবে।" : lang === "mr" ? "स्कॅन पूर्ण झाल्यावर सल्ला येथे दिसेल." : lang === "te" ? "స్కాన్ పూర్తయిన తర్వాత సలహా ఇక్కడ కనిపిస్తుంది." : lang === "ta" ? "ஸ்கேன் முடிந்ததும் வழிகாட்டல் இங்கே காண்பிக்கப்படும்." : isHi ? "स्कैन पूरा होने पर सलाह यहाँ प्रदर्शित होगी।" : "Advisory will display once scan finishes.")
           )}
         </div>
       </div>
@@ -349,7 +386,17 @@ export default function PageMarket({
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
               <span style={{ fontSize: "18px" }}>🥛</span>
               <h4 style={{ margin: 0, fontSize: "15px", fontWeight: "700", color: "#166534" }}>
-                {lang === "bn" ? "দুগ্ধ খাত ম্যাক্রো-জনমিতি ও বাজার ফারাক" : isHi ? "डेयरी क्षेत्र मैक्रो-डेमोग्राफिक्स व बाज़ार अंतर (Macro-Demographics & Market Gap)" : "Dairy Sector Macro-Demographics & Market Gap"}
+                {lang === "bn"
+                  ? "দুগ্ধ খাত ম্যাক্রো-জনমিতি ও বাজার ফারাক"
+                  : lang === "mr"
+                  ? "दुग्धव्यवसाय मॅक्रो-डेमोग्राफिक्स व बाजार फरक (Macro-Demographics & Market Gap)"
+                  : lang === "te"
+                  ? "పాడి పరిశ్రమ స్థానిక జనాభా & మార్కెట్ వ్యత్యాస విశ్లేషణ"
+                  : lang === "ta"
+                  ? "பால் துறை பெரு-மக்கள்தொகை & சந்தை இடைவெளி"
+                  : isHi
+                  ? "डेयरी क्षेत्र मैक्रो-डेमोग्राफिक्स व बाज़ार अंतर (Macro-Demographics & Market Gap)"
+                  : "Dairy Sector Macro-Demographics & Market Gap"}
               </h4>
             </div>
             <span style={{ fontSize: "11px", fontWeight: "600", padding: "3px 10px", backgroundColor: result.dairy_analysis.price_arbitrage?.status === "Strong Sourcing Advantage" ? "#dcfce7" : "#fef3c7", color: result.dairy_analysis.price_arbitrage?.status === "Strong Sourcing Advantage" ? "#15803d" : "#b45309", borderRadius: "6px", border: "1px solid #86efac" }}>
@@ -363,23 +410,71 @@ export default function PageMarket({
 
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "10px", fontSize: "12px", color: "#1e293b" }}>
             <div style={{ backgroundColor: "#ffffff", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <strong style={{ color: "#0f766e" }}>{lang === "bn" ? "১. মূল্যের সুযোগ" : isHi ? "1. मूल्य अंतरण (Price Arbitrage)" : "1. Price Arbitrage (Price Layer)"}</strong>
+              <strong style={{ color: "#0f766e" }}>
+                {lang === "bn" ? "১. মূল্যের সুযোগ (Price Arbitrage)" : lang === "mr" ? "1. दर फरक (Price Arbitrage)" : lang === "te" ? "1. ధర వ్యత్యాసం (Price Arbitrage)" : lang === "ta" ? "1. விலை வேறுபாடு (Price Arbitrage)" : isHi ? "1. मूल्य अंतरण (Price Arbitrage)" : "1. Price Arbitrage (Price Layer)"}
+              </strong>
               <p style={{ margin: "6px 0 0 0", lineHeight: "1.5" }}>
-                {isHi ? result.dairy_analysis.price_arbitrage?.explanation_hi : result.dairy_analysis.price_arbitrage?.explanation}
+                {lang === "bn"
+                  ? (result.dairy_analysis.price_arbitrage?.explanation_bn ||
+                     `স্থানীয় কাঁচা দুধ সংগ্রহের হার (₹${result.dairy_analysis.price_arbitrage?.sourcing_price || 38}/লিটার) এবং খুচরা বিক্রির বাজার দরের (₹${result.dairy_analysis.price_arbitrage?.retail_price || 62}/লিটার) মধ্যে প্রায় ₹${result.dairy_analysis.price_arbitrage?.margin || 24}/লিটার লাভজনক ব্যবধান বিদ্যমান।`)
+                  : lang === "mr"
+                  ? (result.dairy_analysis.price_arbitrage?.explanation_mr ||
+                     `स्थानिक कच्च्या दुधाचा खरेदी दर (₹${result.dairy_analysis.price_arbitrage?.sourcing_price || 38}/लिटर) आणि किरकोळ विक्री दर (₹${result.dairy_analysis.price_arbitrage?.retail_price || 62}/लिटर) यांमध्ये सुमारे ₹${result.dairy_analysis.price_arbitrage?.margin || 24}/लिटरचा चांगला नफा उपलब्ध आहे.`)
+                  : lang === "te"
+                  ? (result.dairy_analysis.price_arbitrage?.explanation_te ||
+                     `స్థానిక పచ్చి పాల సేకరణ ధర (₹${result.dairy_analysis.price_arbitrage?.sourcing_price || 38}/లీటర్) మరియు రిటైల్ అమ్మకపు ధర (₹${result.dairy_analysis.price_arbitrage?.retail_price || 62}/లీటర్) మధ్య సుమారు ₹${result.dairy_analysis.price_arbitrage?.margin || 24}/లీటర్ మంచి లాభం లభిస్తుంది.`)
+                  : lang === "ta"
+                  ? (result.dairy_analysis.price_arbitrage?.explanation_ta ||
+                     `உள்ளூர் பால் கொள்முதல் விலை (₹${result.dairy_analysis.price_arbitrage?.sourcing_price || 38}/லிட்டர்) மற்றும் சில்லறை விற்பனை விலைக்கு (₹${result.dairy_analysis.price_arbitrage?.retail_price || 62}/லிட்டர்) இடையே சுமார் ₹${result.dairy_analysis.price_arbitrage?.margin || 24}/லிட்டர் கூடுதல் லாபம் கிடைக்கும்.`)
+                  : isHi
+                  ? result.dairy_analysis.price_arbitrage?.explanation_hi
+                  : result.dairy_analysis.price_arbitrage?.explanation}
               </p>
             </div>
 
             <div style={{ backgroundColor: "#ffffff", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <strong style={{ color: "#0369a1" }}>{lang === "bn" ? "২. কৃষক B2B লক্ষ্য" : isHi ? "2. किसान B2B लक्ष्यीकरण (Demographics)" : "2. Demographic Targeting (Gap Layer)"}</strong>
+              <strong style={{ color: "#0369a1" }}>
+                {lang === "bn" ? "২. কৃষক B2B লক্ষ্য (Demographics)" : lang === "mr" ? "2. शेतकरी B2B उद्दिष्ट (Demographics)" : lang === "te" ? "2. రైతు B2B లక్ష్యం (Demographics)" : lang === "ta" ? "2. விவசாயி B2B இலக்கு (Demographics)" : isHi ? "2. किसान B2B लक्ष्यीकरण (Demographics)" : "2. Demographic Targeting (Gap Layer)"}
+              </strong>
               <p style={{ margin: "6px 0 0 0", lineHeight: "1.5" }}>
-                {isHi ? result.dairy_analysis.demographic_targeting?.explanation_hi : result.dairy_analysis.demographic_targeting?.explanation}
+                {lang === "bn"
+                  ? (result.dairy_analysis.demographic_targeting?.explanation_bn ||
+                     `এই জেলায় প্রায় ${Number(result.dairy_analysis.demographic_targeting?.total_b2b_dairy_farmers || 48000).toLocaleString("en-IN")} নিবন্ধিত দুগ্ধ চাষী পরিবার রয়েছে। স্থানীয় সংগ্রহ ব্যবস্থা গড়ে তুলে দালালদের কমিশন বাদ দিয়ে সরাসরি তাদের সাথে কাজ করা সম্ভব।`)
+                  : lang === "mr"
+                  ? (result.dairy_analysis.demographic_targeting?.explanation_mr ||
+                     `या जिल्ह्यात सुमारे ${Number(result.dairy_analysis.demographic_targeting?.total_b2b_dairy_farmers || 48000).toLocaleString("en-IN")} नोंदणीकृत शेतकरी कुटुंबे आहेत. मध्यस्थांशिवाय थेट त्यांच्याकडून संकलन करून चांगला नफा मिळवता येईल.`)
+                  : lang === "te"
+                  ? (result.dairy_analysis.demographic_targeting?.explanation_te ||
+                     `ఈ జిల్లాలో సుమారు ${Number(result.dairy_analysis.demographic_targeting?.total_b2b_dairy_farmers || 48000).toLocaleString("en-IN")} నమోదైన పాడి రైతు కుటుంబాలు ఉన్నాయి. దళారులు లేకుండా నేరుగా వారి నుండి పాలను సేకరించవచ్చు.`)
+                  : lang === "ta"
+                  ? (result.dairy_analysis.demographic_targeting?.explanation_ta ||
+                     `இந்த மாவட்டத்தில் சுமார் ${Number(result.dairy_analysis.demographic_targeting?.total_b2b_dairy_farmers || 48000).toLocaleString("en-IN")} பதிவு செய்யப்பட்ட பால் பண்ணை விவசாயிகள் உள்ளனர். இடைத்தரகர்கள் இல்லாமல் நேரடியாக கொள்முதல் செய்யலாம்.`)
+                  : isHi
+                  ? result.dairy_analysis.demographic_targeting?.explanation_hi
+                  : result.dairy_analysis.demographic_targeting?.explanation}
               </p>
             </div>
 
             <div style={{ backgroundColor: "#ffffff", padding: "10px 12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-              <strong style={{ color: "#7e22ce" }}>{lang === "bn" ? "৩. বাজারের আকার" : isHi ? "3. बाज़ार आकार व EMI (Market Sizing)" : "3. Market Sizing (Integrated Dataset)"}</strong>
+              <strong style={{ color: "#7e22ce" }}>
+                {lang === "bn" ? "৩. বাজারের আকার ও EMI (Market Sizing)" : lang === "mr" ? "3. बाजार आकार व EMI (Market Sizing)" : lang === "te" ? "3. మార్కెట్ పరిమాణం & EMI (Market Sizing)" : lang === "ta" ? "3. சந்தை அளவு & EMI (Market Sizing)" : isHi ? "3. बाज़ार आकार व EMI (Market Sizing)" : "3. Market Sizing (Integrated Dataset)"}
+              </strong>
               <p style={{ margin: "6px 0 0 0", lineHeight: "1.5" }}>
-                {isHi ? result.dairy_analysis.market_sizing?.explanation_hi : result.dairy_analysis.market_sizing?.explanation}
+                {lang === "bn"
+                  ? (result.dairy_analysis.market_sizing?.explanation_bn ||
+                     `উদ্বৃত্ত দুধ ও পনির, দই ইত্যাদি প্রক্রিয়াজাত করে বাজারজাত করলে মাসিক কিস্তি (${result.dairy_analysis.market_sizing?.emi_coverage_ratio || "3.8"}x গুণ কভারেজ সহ) অতি সহজেই সুরক্ষিত থাকবে।`)
+                  : lang === "mr"
+                  ? (result.dairy_analysis.market_sizing?.explanation_mr ||
+                     `अतिरिक्त दुग्ध प्रक्रिया (पनीर, दही) केल्याने मासिक बँक हप्ता (${result.dairy_analysis.market_sizing?.emi_coverage_ratio || "3.8"}x पटीने) अत्यंत सुरक्षितपणे फेडता येईल.`)
+                  : lang === "te"
+                  ? (result.dairy_analysis.market_sizing?.explanation_te ||
+                     `పాల ఉత్పత్తుల తయారీ ద్వారా వచ్చే అదనపు ఆదాయం బ్యాంకు వాయిదాను (${result.dairy_analysis.market_sizing?.emi_coverage_ratio || "3.8"}x రెట్ల కవరేజ్‌తో) సులభంగా చెల్లించేలా చేస్తుంది.`)
+                  : lang === "ta"
+                  ? (result.dairy_analysis.market_sizing?.explanation_ta ||
+                     `பால் மதிப்பு கூட்டப்பட்ட பொருட்கள் மூலம் கிடைக்கும் கூடுதல் வருமானம் மாதாந்திர தவணையை (${result.dairy_analysis.market_sizing?.emi_coverage_ratio || "3.8"}x மடங்கு) எளிதாக ஈடுகட்டும்.`)
+                  : isHi
+                  ? result.dairy_analysis.market_sizing?.explanation_hi
+                  : result.dairy_analysis.market_sizing?.explanation}
               </p>
             </div>
           </div>
@@ -391,9 +486,16 @@ export default function PageMarket({
         <div>
           <h4>{getUI("localStrategyTipTitle", lang, "Local Market Strategy Recommendation:")}</h4>
           <p>
-            {market.recommendation ||
-              (lang === "bn"
+            {market.recommendation
+              ? translateDynamicPhrase(market.recommendation, lang)
+              : (lang === "bn"
                 ? "স্থানীয় বাজারে আস্থাই সবচেয়ে বড় মূলধন। পণ্যের খাঁটি মান এবং সঠিক ওজন বজায় রাখুন। প্রথম ৩ মাসে পরিচিতি বাড়াতে গ্রাহকদের সাথে সুসম্পর্ক ও হোয়াটসঅ্যাপ গ্রুপ ব্যবহার করুন।"
+                : lang === "mr"
+                ? "स्थानिक बाजारात विश्वास हीच सर्वात मोठी संपत्ती आहे. चांगली गुणवत्ता व अचूक वजन ठेवा. सुरुवातीच्या ३ महिन्यांत ग्राहकांशी सुसंवाद आणि व्हॉट्सॲप ग्रुपचा वापर करून प्रचार करा."
+                : lang === "te"
+                ? "స్థానిక మార్కెట్‌లో నమ్మకమే అతిపెద్ద పెట్టుబడి. ఉత్పత్తుల నాణ్యత, సరైన తూకం పాటించండి. మొదటి 3 నెలల్లో స్థానిక వాట్సాప్ గ్రూపులు మరియు పరిచయాలతో ప్రచారం చేసుకోండి."
+                : lang === "ta"
+                ? "உள்ளூர் சந்தையில் நம்பிக்கையே மிகப்பெரிய மூலதனம். தரமான தயாரிப்புகளையும் துல்லியமான எடையையும் பேணுங்கள். ஆரம்ப 3 மாதங்களில் வாடிக்கையாளர் நன்மதிப்பையும் வாட்ஸ்அப் குழுக்களையும் பயன்படுத்துங்கள்."
                 : isHi
                 ? "गाँव के बाज़ार में भरोसा सबसे बड़ी पूँजी है। अच्छी गुणवत्ता और सही तौल रखें। शुरुआती 3 महीनों में ग्राहकों को अपने उत्पाद का प्रचार करने के लिए माउथ-टू-माउथ पब्लिसिटी और मोबाइल व्हाट्सएप ग्रुप का उपयोग करें।"
                 : "Trust and fair pricing build the strongest rural moat. Maintain consistent quality, offer transparent weight, and utilize local WhatsApp groups and word-of-mouth among panchayat members.")}

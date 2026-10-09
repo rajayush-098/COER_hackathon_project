@@ -8,16 +8,34 @@ function getNextId(prefix) {
   return `${prefix}-${msgCounter}`;
 }
 
-export default function SahyogiAssistant({ currentResult, lang }) {
+export default function SahyogiAssistant({ currentResult, lang = "hi" }) {
   const [isOpen, setIsOpen] = useState(false);
+
+  const getGreeting = () => {
+    switch (lang) {
+      case "bn":
+        return "নমস্কার! আমি সহযোগী (SAHYOGI)। আপনার ব্যবসার সম্ভাব্যতা, সরকারি ঋণ, লাভের হিসাব বা যেকোনো বিষয়ে আমাকে জিজ্ঞাসা করতে পারেন। বলুন কিভাবে সাহায্য করতে পারি?";
+      case "mr":
+        return "नमस्कार! मी सहयोगी (SAHYOGI) आहे. आपण मला या व्यवसायाची व्यवहार्यता, सरकारी कर्ज, नफ्याचे गणित किंवा कोणताही सामान्य प्रश्न विचारू शकता. सांगा मी कशी मदत करू?";
+      case "te":
+        return "నమస్కారం! నేను సహయోగి (SAHYOGI). మీరు ఈ వ్యాపార సాధ్యత, ప్రభుత్వ రుణాలు, లాభాల లెక్కలు లేదా ఏదైనా సాధారణ ప్రశ్న గురించి నన్ను అడగవచ్చు. నేను మీకు ఎలా సహాయం చేయగలను?";
+      case "ta":
+        return "வணக்கம்! நான் சஹயோகி (SAHYOGI). உங்கள் தொழில் சாத்தியக்கூறுகள், அரசு கடன்கள், லாப கணக்குகள் அல்லது ஏதேனும் பொதுவான கேள்விகளை நீங்கள் என்னிடம் கேட்கலாம். நான் உங்களுக்கு எவ்வாறு உதவ முடியும்?";
+      case "hinglish":
+        return "Namaste! Main Sahyogi hoon. Aap mujhse is business, govt loan schemes, munafey ka hisab ya koi bhi sawal poochh sakte hain. Bataiye main kya madad karoon?";
+      case "en":
+        return "Hello! I am SAHYOGI, your business companion. You can ask me anything about your business feasibility, govt loans, profits, or any general question. How can I help you?";
+      case "hi":
+      default:
+        return "नमस्ते! मैं सहयोगी (SAHYOGI) हूँ। आप मुझसे इस बिज़नेस के बारे में, सरकारी लोन, मुनाफ़े का गणित या कोई भी सामान्य सवाल पूछ सकते हैं। बताइए मैं क्या मदद करूँ?";
+    }
+  };
+
   const [messages, setMessages] = useState([
     {
       id: "welcome-1",
       sender: "sahyogi",
-      text:
-        lang === "hi"
-          ? "नमस्ते! मैं सहयोगी (SAHYOGI) हूँ। आप मुझसे इस बिज़नेस के बारे में, सरकारी लोन, मुनाफ़े का गणित या कोई भी सामान्य सवाल पूछ सकते हैं। बताइए मैं क्या मदद करूँ?"
-          : "Hello! I am SAHYOGI, your business companion. You can ask me anything about your business feasibility, govt loans, profits, or any general question. How can I help you?",
+      text: getGreeting(),
       time: "Online",
     },
   ]);
@@ -35,20 +53,61 @@ export default function SahyogiAssistant({ currentResult, lang }) {
     }
   }, [messages, isOpen]);
 
-  const quickQuestions =
-    lang === "hi"
-      ? [
+  const getQuickQuestions = () => {
+    switch (lang) {
+      case "bn":
+        return [
+          "দোকানে বিক্রি কীভাবে বাড়াব?",
+          "মুদ্রা ঋণের নিয়ম কী?",
+          "কম পুঁজিতে কোন ব্যবসা ভালো?",
+          "সহযোগী, আপনি কে?",
+        ];
+      case "mr":
+        return [
+          "दुकानात विक्री कशी वाढवावी?",
+          "मुद्रा कर्जाचे नियम काय आहेत?",
+          "कमी भांडवलात कोणता व्यवसाय चांगला?",
+          "सहयोगी, तू कोण आहेस?",
+        ];
+      case "te":
+        return [
+          "దుకాణంలో అమ్మకాలు ఎలా పెంచాలి?",
+          "ముద్రా లోన్ నిబంధనలు ఏమిటి?",
+          "తక్కువ పెట్టుబడితో ఏ వ్యాపారం మంచిది?",
+          "సహయోగి, నువ్వు ఎవరు?",
+        ];
+      case "ta":
+        return [
+          "கடையில் விற்பனையை அதிகரிப்பது எப்படி?",
+          "முத்ரா கடன் விதிகள் என்ன?",
+          "குறைந்த முதலீட்டில் சிறந்த தொழில் எது?",
+          "சஹயோகி, நீங்கள் யார்?",
+        ];
+      case "hinglish":
+        return [
+          "Dukaan me bikri kaise badhayein?",
+          "Mudra loan ke niyam kya hain?",
+          "Kam poonji me kaun sa kaam accha rahega?",
+          "Sahyogi, tum kaun ho?",
+        ];
+      case "hi":
+        return [
           "दुकान में बिक्री कैसे बढ़ाएं?",
           "मुद्रा लोन के नियम क्या हैं?",
           "कम पूँजी में कौन सा काम अच्छा रहेगा?",
           "सहयोगी, तुम कौन हो?",
-        ]
-      : [
+        ];
+      default:
+        return [
           "How to increase shop sales?",
           "What are Mudra loan rules?",
           "Best business with low investment?",
           "Sahyogi, who are you?",
         ];
+    }
+  };
+
+  const quickQuestions = getQuickQuestions();
 
   const handleSend = async (textToSend) => {
     const text = (textToSend || inputText).trim();
@@ -95,6 +154,8 @@ export default function SahyogiAssistant({ currentResult, lang }) {
         body: JSON.stringify({
           message: text,
           context,
+          language: lang,
+          lang,
         }),
         signal: controller.signal,
       });
@@ -108,7 +169,15 @@ export default function SahyogiAssistant({ currentResult, lang }) {
       const data = await res.json();
       const replyText =
         data.reply ||
-        (lang === "hi"
+        (lang === "bn"
+          ? "দুঃখিত, উত্তর দিতে সমস্যা হয়েছে। অনুগ্রহ করে আবার জিজ্ঞাসা করুন।"
+          : lang === "mr"
+          ? "क्षमस्व, उत्तर देण्यात अडचण आली. कृपया पुन्हा विचारा."
+          : lang === "te"
+          ? "క్షమించండి, సమాధానం ఇవ్వడంలో సమస్య వచ్చింది. దయచేసి మళ్ళీ అడగండి."
+          : lang === "ta"
+          ? "மன்னிக்கவும், பதிலளிப்பதில் சிக்கல் ஏற்பட்டது. தயவுசெய்து மீண்டும் கேட்கவும்."
+          : lang === "hi"
           ? "माफ़ कीजिए, मुझे उत्तर देने में परेशानी हुई। कृपया दोबारा पूछें।"
           : "Sorry, I had trouble answering. Please ask again.");
 
@@ -129,7 +198,15 @@ export default function SahyogiAssistant({ currentResult, lang }) {
           id: getNextId("sahyogi-err"),
           sender: "sahyogi",
           text:
-            lang === "hi"
+            lang === "bn"
+              ? "সার্ভারের সাথে সংযোগে সাময়িক সমস্যা হচ্ছে। অনুগ্রহ করে একটু পরে আবার চেষ্টা করুন।"
+              : lang === "mr"
+              ? "नेटवर्क किंवा सर्व्हरमध्ये अडचण येत आहे. कृपया थोड्या वेळाने पुन्हा विचारा."
+              : lang === "te"
+              ? "నెట్‌వర్క్ లేదా సర్వర్‌లో సమస్య ఉంది. దయచేసి కాసేపటి తర్వాత మళ్ళీ అడగండి."
+              : lang === "ta"
+              ? "சர்வரில் தற்காலிக சிக்கல் உள்ளது. சிறிது நேரம் கழித்து மீண்டும் முயற்சிக்கவும்."
+              : lang === "hi"
               ? "नेटवर्क या सर्वर में थोड़ी दिक्कत आ रही है। कृपया थोड़ी देर बाद दोबारा पूछें।"
               : "Assistant service is momentarily unreachable. Please try asking again shortly.",
           time: "Notice",
@@ -147,6 +224,58 @@ export default function SahyogiAssistant({ currentResult, lang }) {
     }
   };
 
+  const bubbleText =
+    lang === "bn"
+      ? "সাহায্য প্রয়োজন? সহযোগীকে জিজ্ঞাসা করুন"
+      : lang === "mr"
+      ? "मदत हवी असल्यास, सहयोगीला विचारा"
+      : lang === "te"
+      ? "సహాయం కావాలా? సహయోగిని అడగండి"
+      : lang === "ta"
+      ? "உதவி தேவையா? சஹயோகியிடம் கேளுங்கள்"
+      : lang === "hi"
+      ? "कोई मदद चाहिए? सहयोगी से पूछें"
+      : "Need any help, ask Sahyogi";
+
+  const subtitleText =
+    lang === "bn"
+      ? "আপনার ব্যবসা সঙ্গী • যেকোনো প্রশ্ন করুন"
+      : lang === "mr"
+      ? "आपला व्यवसाय मित्र • काहीही विचारा"
+      : lang === "te"
+      ? "మీ వ్యాపార మిత్రుడు • ఏదైనా అడగండి"
+      : lang === "ta"
+      ? "உங்கள் வணிகத் தோழன் • எதையும் கேளுங்கள்"
+      : lang === "hi"
+      ? "आपका व्यापार साथी • कुछ भी पूछें"
+      : "Business Sathi • Ask Anything";
+
+  const placeholderText =
+    lang === "bn"
+      ? "সহযোগীকে প্রশ্ন করুন..."
+      : lang === "mr"
+      ? "सहयोगीला प्रश्न विचारा..."
+      : lang === "te"
+      ? "సహయోగిని ఏదైనా అడగండి..."
+      : lang === "ta"
+      ? "சஹயோகியிடம் கேள்வி கேளுங்கள்..."
+      : lang === "hi"
+      ? "सहयोगी से सवाल पूछें..."
+      : "Ask SAHYOGI anything...";
+
+  const sendBtnText =
+    lang === "bn"
+      ? "পাঠান"
+      : lang === "mr"
+      ? "पाठवा"
+      : lang === "te"
+      ? "పంపండి"
+      : lang === "ta"
+      ? "அனுப்பு"
+      : lang === "hi"
+      ? "भेजें"
+      : "Send";
+
   return (
     <div className="sahyogi-container smrity-container" id="sahyogi-widget">
       {/* Small Help Bubble (Visible when popup is closed) */}
@@ -156,7 +285,7 @@ export default function SahyogiAssistant({ currentResult, lang }) {
           onClick={() => setIsOpen(true)}
           role="button"
           tabIndex={0}
-          aria-label="Need any help, ask Sahyogi"
+          aria-label={bubbleText}
           onKeyDown={(e) => {
             if (e.key === "Enter" || e.key === " ") {
               e.preventDefault();
@@ -164,7 +293,7 @@ export default function SahyogiAssistant({ currentResult, lang }) {
             }
           }}
         >
-          <span className="sahyogi-help-bubble-text">Need any help, ask Sahyogi</span>
+          <span className="sahyogi-help-bubble-text">{bubbleText}</span>
           <span className="sahyogi-help-bubble-pointer" aria-hidden="true" />
         </div>
       )}
@@ -180,10 +309,10 @@ export default function SahyogiAssistant({ currentResult, lang }) {
               </div>
               <div>
                 <h4 className="sahyogi-title smrity-title">
-                  {lang === "hi" ? "सहयोगी (SAHYOGI)" : "SAHYOGI (सहयोगी)"}
+                  {lang === "bn" ? "সহযোগী (SAHYOGI)" : lang === "mr" ? "सहयोगी (SAHYOGI)" : lang === "hi" ? "सहयोगी (SAHYOGI)" : "SAHYOGI (সহযোগী)"}
                 </h4>
                 <p className="sahyogi-subtitle smrity-subtitle">
-                  {lang === "hi" ? "आपका व्यापार साथी • कुछ भी पूछें" : "Business Sathi • Ask Anything"}
+                  {subtitleText}
                 </p>
               </div>
             </div>
@@ -254,7 +383,7 @@ export default function SahyogiAssistant({ currentResult, lang }) {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={lang === "hi" ? "सहयोगी से सवाल पूछें..." : "Ask SAHYOGI anything..."}
+              placeholder={placeholderText}
               disabled={loading}
             />
             <button
@@ -263,7 +392,7 @@ export default function SahyogiAssistant({ currentResult, lang }) {
               onClick={() => handleSend()}
               disabled={!inputText.trim() || loading}
             >
-              {lang === "hi" ? "भेजें" : "Send"}
+              {sendBtnText}
             </button>
           </div>
         </div>
@@ -276,7 +405,7 @@ export default function SahyogiAssistant({ currentResult, lang }) {
         className={`smrity-trigger-button ${isOpen ? "active" : ""}`}
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
-        title={isOpen ? (lang === "hi" ? "सहयोगी बंद करें" : "Close SAHYOGI") : (lang === "hi" ? "सहयोगी से सवाल पूछें" : "Ask SAHYOGI")}
+        title={isOpen ? (lang === "bn" ? "সহযোগী বন্ধ করুন" : lang === "mr" ? "सहयोगी बंद करा" : lang === "te" ? "సహయోగిని మూసివేయండి" : lang === "ta" ? "சஹயோகியை மூடவும்" : lang === "hi" ? "सहयोगी बंद करें" : "Close SAHYOGI") : (lang === "bn" ? "সহযোগীকে প্রশ্ন করুন" : lang === "mr" ? "सहयोगीला विचारा" : lang === "te" ? "సహయోగిని అడగండి" : lang === "ta" ? "சஹயோகியிடம் கேளுங்கள்" : lang === "hi" ? "सहयोगी से सवाल पूछें" : "Ask SAHYOGI")}
       >
         <span className="smrity-trigger-badge">
           {isOpen ? <X size={20} /> : <UserRound size={22} />}

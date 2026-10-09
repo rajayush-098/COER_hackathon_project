@@ -1628,12 +1628,6 @@ function App() {
             {/* Top Navigation Bar inside Results View */}
             <div className="hub-top-strip no-print">
               <div className="hub-top-left">
-                <div className="hub-breadcrumbs">
-                  <span className="hub-tag">
-                    {result.business}
-                  </span>
-                </div>
-
                 <button
                   type="button"
                   className="hub-nav-toggle-btn"
@@ -1649,20 +1643,15 @@ function App() {
                     {currentIndex + 1}/11
                   </span>
                 </button>
+              </div>
 
-                <div className="hub-breadcrumbs">
-                  <span className="hub-crumb-sep">/</span>
-                  <span className="hub-current-page">
-                    {PAGES[currentIndex]?.title[lang] || PAGES[currentIndex]?.title.en}
-                  </span>
-                </div>
+              <div className="hub-top-center">
+                <h2 className="hub-business-title">
+                  {result.business}
+                </h2>
               </div>
 
               <div className="hub-top-right">
-                <span className="page-indicator-pill">
-                  {t.page} {currentIndex + 1} {t.of} {PAGES.length}
-                </span>
-
                 <button
                   type="button"
                   className="hub-back-edit-btn"

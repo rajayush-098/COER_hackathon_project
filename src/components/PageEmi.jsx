@@ -1,7 +1,6 @@
 import {
   getUI,
   getPageBadge,
-  translateAffordability,
 } from "../utils/translationHelper";
 
 export default function PageEmi({ result, formatCurrency, lang = "hi" }) {
@@ -224,42 +223,75 @@ export default function PageEmi({ result, formatCurrency, lang = "hi" }) {
                 <th>{lang === "bn" ? "ত্রৈমাসিক" : lang === "mr" ? "तिमाही" : lang === "te" ? "త్రైమాసికం" : lang === "ta" ? "காலாண்டு" : isHi ? "तिमाही (Quarter)" : "Quarter"}</th>
                 <th>{lang === "bn" ? "মাস" : lang === "mr" ? "महिने" : lang === "te" ? "నెలలు" : lang === "ta" ? "மாதங்கள்" : isHi ? "महीने (Months)" : "Months"}</th>
                 <th>{lang === "bn" ? "ধাপ" : lang === "mr" ? "टप्पा" : lang === "te" ? "దశ" : lang === "ta" ? "கட்டம்" : isHi ? "दौर (Phase)" : "Phase"}</th>
-                <th>{lang === "bn" ? "মোট কিস্তি (EMI)" : lang === "mr" ? "एकूण हप्ता (EMI)" : isHi ? "कुल किश्त (EMI)" : "Total EMI"}</th>
-                <th>{lang === "bn" ? "সুদ" : lang === "mr" ? "व्याज" : isHi ? "ब्याज (Interest)" : "Interest Part"}</th>
-                <th>{lang === "bn" ? "আসল" : lang === "mr" ? "मुद्दल" : isHi ? "मूलधन (Principal)" : "Principal Part"}</th>
-                <th>{lang === "bn" ? "অবশিষ্ট ঋণ" : lang === "mr" ? "शिल्लक कर्ज" : isHi ? "बाकी लोन (Outstanding)" : "Balance Left"}</th>
+                <th>{lang === "bn" ? "মোট কিস্তি (EMI)" : lang === "mr" ? "एकूण हप्ता (EMI)" : lang === "te" ? "మొత్తం వాయిదా (EMI)" : lang === "ta" ? "மொத்த தவணை (EMI)" : isHi ? "कुल किश्त (EMI)" : "Total EMI"}</th>
+                <th>{lang === "bn" ? "সুদ" : lang === "mr" ? "व्याज" : lang === "te" ? "వడ్డీ" : lang === "ta" ? "வட்டி" : isHi ? "ब्याज (Interest)" : "Interest Part"}</th>
+                <th>{lang === "bn" ? "আসল" : lang === "mr" ? "मुद्दल" : lang === "te" ? "అసలు" : lang === "ta" ? "அசல்" : isHi ? "मूलधन (Principal)" : "Principal Part"}</th>
+                <th>{lang === "bn" ? "অবশিষ্ট ঋণ" : lang === "mr" ? "शिल्लक कर्ज" : lang === "te" ? "మిగిలిన రుణం" : lang === "ta" ? "மீதமுள்ள கடன்" : isHi ? "बाकी लोन (Outstanding)" : "Balance Left"}</th>
               </tr>
             </thead>
             <tbody>
               {schedule.length > 0 ? (
-                schedule.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <strong>{item.quarter}</strong>
-                    </td>
-                    <td>{item.months}</td>
-                    <td>
-                      <span
-                        className={`pill-badge ${
-                          item.phase?.includes("Moratorium") ? "pill-amber" : "pill-green"
-                        }`}
-                      >
-                        {item.phase}
-                      </span>
-                    </td>
-                    <td className="text-green">
-                      <strong>{formatCurrency(item.emi_total)}</strong>
-                    </td>
-                    <td>{formatCurrency(item.interest_total)}</td>
-                    <td>{formatCurrency(item.principal_total)}</td>
-                    <td>{formatCurrency(item.outstanding_principal)}</td>
-                  </tr>
-                ))
+                schedule.map((item, index) => {
+                  const translatedPhase =
+                    item.phase?.includes("Moratorium")
+                      ? (lang === "bn"
+                          ? "কিস্তি স্থগিত (শুধুমাত্র সুদ)"
+                          : lang === "mr"
+                          ? "सवलत कालावधी (फक्त व्याज)"
+                          : lang === "te"
+                          ? "రాయితీ కాలం (వడ్డీ మాత్రమే)"
+                          : lang === "ta"
+                          ? "சலுகை காலம் (வட்டி மட்டும்)"
+                          : isHi
+                          ? "छूट अवधि (केवल ब्याज)"
+                          : "Moratorium (Interest Only)")
+                      : (lang === "bn"
+                          ? "নিয়মিত কিস্তি"
+                          : lang === "mr"
+                          ? "नियमित परतफेड"
+                          : lang === "te"
+                          ? "సాధారణ చెల్లింపు"
+                          : lang === "ta"
+                          ? "வழக்கமான தவணை"
+                          : isHi
+                          ? "नियमित किश्त"
+                          : "Standard Repayment");
+
+                  return (
+                    <tr key={index}>
+                      <td>
+                        <strong>{item.quarter}</strong>
+                      </td>
+                      <td>{item.months}</td>
+                      <td>
+                        <span
+                          className={`pill-badge ${
+                            item.phase?.includes("Moratorium") ? "pill-amber" : "pill-green"
+                          }`}
+                        >
+                          {translatedPhase}
+                        </span>
+                      </td>
+                      <td className="text-green">
+                        <strong>{formatCurrency(item.emi_total)}</strong>
+                      </td>
+                      <td>{formatCurrency(item.interest_total)}</td>
+                      <td>{formatCurrency(item.principal_total)}</td>
+                      <td>{formatCurrency(item.outstanding_principal)}</td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td colSpan="7" className="text-center">
                     {lang === "bn"
                       ? "কিস্তি সময়সূচি উপলব্ধ নেই।"
+                      : lang === "mr"
+                      ? "हप्ता सारणी उपलब्ध नाही."
+                      : lang === "te"
+                      ? "వాయిదా పట్టిక అందుబాటులో లేదు."
+                      : lang === "ta"
+                      ? "தவணை அட்டவணை கிடைக்கவில்லை."
                       : isHi
                       ? "किश्त सारणी उपलब्ध नहीं है।"
                       : "No quarterly repayment schedule available."}

@@ -2222,6 +2222,383 @@ export const COMMON_UI: Record<string, Record<string, string>> = {
   },
 };
 
+// ================= DYNAMIC TRANSLATION: COMMON BUSINESS ITEMS =================
+const DYNAMIC_PHRASE_DICTIONARY: Record<string, Record<string, string>> = {
+  // Application Steps
+  "Prepare business/project information and feasibility report": {
+    en: "Prepare business/project information and feasibility report",
+    hi: "व्यवसाय/प्रोजेक्ट की जानकारी व व्यवहार्यता रिपोर्ट (पर्चा) तैयार करें",
+    hinglish: "Business information aur feasibility report taiyar karein",
+    mr: "व्यवसाय/प्रकल्पाची माहिती व व्यवहार्यता अहवाल तयार करा",
+    bn: "ব্যবসা/প্রকল্পের তথ্য এবং সম্ভাব্যতা প্রতিবেদন প্রস্তুত করুন",
+    te: "వ్యాపార/ప్రాజెక్ట్ సమాచారం మరియు సాధ్యత నివేదికను సిద్ధం చేయండి",
+    ta: "வணிக/திட்ட தகவல் மற்றும் சாத்தியக்கூறு அறிக்கையை தயார் செய்யவும்",
+  },
+  "Submit application with KYC documents to eligible Member Lending Institution": {
+    en: "Submit application with KYC documents to eligible Member Lending Institution",
+    hi: "पात्र बैंक या वित्तीय संस्थान में केवाईसी दस्तावेज़ों के साथ आवेदन जमा करें",
+    hinglish: "Bank me KYC documents ke sath aavedan jama karein",
+    mr: "पात्र बँक किंवा वित्तीय संस्थेत केवायसी कागदपत्रांसह अर्ज सादर करा",
+    bn: "যোগ্য ব্যাংক বা আর্থিক প্রতিষ্ঠানে কেওয়াইসি নথিপত্র সহ আবেদন জমা দিন",
+    te: "అర్హత కలిగిన బ్యాంకులో కేవైసీ పత్రాలతో దరఖాస్తును సమర్పించండి",
+    ta: "தகுதியான வங்கியில் கேஒய்சி ஆவணங்களுடன் விண்ணப்பத்தை சமர்ப்பிக்கவும்",
+  },
+  "Undergo lender appraisal and field verification": {
+    en: "Undergo lender appraisal and field verification",
+    hi: "बैंक अधिकारी द्वारा प्रोजेक्ट मूल्यांकन व ज़मीनी सत्यापन पूरा करवाएं",
+    hinglish: "Bank dwara field verification aur appraisal karwayen",
+    mr: "बँकेकडून प्रकल्प मूल्यांकन आणि प्रत्यक्ष जागेची पडताळणी करून घ्या",
+    bn: "ব্যাংক কর্মকর্তার প্রকল্প মূল্যায়ন এবং সরেজমিন যাচাইকরণ সম্পন্ন করুন",
+    te: "బ్యాంక్ ద్వారా ప్రాజెక్ట్ పరిశీలన మరియు ఫీల్డ్ వెరిఫికేషన్ చేయించుకోండి",
+    ta: "வங்கி மதிப்பீடு மற்றும் நேரடி கள சரிபார்ப்பை மேற்கொள்ளுங்கள்",
+  },
+  "Loan sanction and fund disbursement to enterprise account": {
+    en: "Loan sanction and fund disbursement to enterprise account",
+    hi: "लोन स्वीकृति पत्र प्राप्त करें और व्यावसायिक खाते में राशि ट्रांसफर करवाएं",
+    hinglish: "Loan sanction hone par account me paise transfer karwayen",
+    mr: "कर्ज मंजुरी पत्र मिळवा आणि व्यवसाय खात्यात निधी जमा करून घ्या",
+    bn: "ঋণ অনুমোদন এবং ব্যবসায়িক অ্যাকাউন্টে অর্থ ছাড় করান",
+    te: "రుణ ఆమోదం పొంది వ్యాపార ఖాతాలోకి నిధులను జమ చేయించుకోండి",
+    ta: "கடன் ஒப்புதல் பெற்று வணிக கணக்கில் நிதியை பெற்றுக் கொள்ளுங்கள்",
+  },
+
+  // Documents
+  "Aadhaar Card (Identity & address verification)": {
+    en: "Aadhaar Card (Identity & address verification)",
+    hi: "आधार कार्ड (पहचान व पते का प्रमाण)",
+    hinglish: "Aadhaar Card (Identity & Address Proof)",
+    mr: "आधार कार्ड (ओळख व पत्त्याचा पुरावा)",
+    bn: "আধার কার্ড (পরিচয় ও ঠিকানার প্রমাণপত্র)",
+    te: "ఆధార్ కార్డు (గుర్తింపు & చిరునామా ధృవీకరణ)",
+    ta: "ஆதார் அட்டை (அடையாளம் & முகவரி சான்று)",
+  },
+  "PAN Card (Financial verification)": {
+    en: "PAN Card (Financial verification)",
+    hi: "पैन कार्ड (वित्तीय पहचान प्रमाण)",
+    hinglish: "PAN Card (Financial verification)",
+    mr: "पॅन कार्ड (आर्थिक पडताळणी)",
+    bn: "প্যান কার্ড (আর্থিক শনাক্তকরণ প্রমাণপত্র)",
+    te: "పాన్ కార్డు (ఆర్థిక ధృవీకరణ)",
+    ta: "பான் அட்டை (நிதி சரிபார்ப்பு)",
+  },
+  "Bank passbook statement (Last 6 months)": {
+    en: "Bank passbook statement (Last 6 months)",
+    hi: "बैंक पासबुक या खाता विवरण (पिछले 6 महीने)",
+    hinglish: "Bank Passbook Statement (Pichhle 6 mahine)",
+    mr: "बँक पासबुक किंवा स्टेटमेंट (मागील 6 महिने)",
+    bn: "ব্যাংক পাসবই বা হিসাব বিবরণী (বিগত ৬ মাস)",
+    te: "బ్యాంక్ పాస్‌బుక్ స్టేట్‌మెంట్ (గత 6 నెలలు)",
+    ta: "வங்கி பாஸ்புக் அறிக்கை (கடந்த 6 மாதங்கள்)",
+  },
+  "Business Project Report / Feasibility Parcha": {
+    en: "Business Project Report / Feasibility Parcha",
+    hi: "व्यापार प्रोजेक्ट रिपोर्ट / व्यवहार्यता पर्चा (Vyapaar Parcha)",
+    hinglish: "Project Report / Vyapaar Parcha",
+    mr: "व्यवसाय प्रकल्प अहवाल / व्यवहार्यता अहवाल (पर्चा)",
+    bn: "ব্যবসা প্রকল্প রিপোর্ট / সম্ভাব্যতা প্রতিবেদন (পর্চা)",
+    te: "వ్యాపార ప్రాజెక్ట్ నివేదిక / సాధ్యత పర్చా",
+    ta: "வணிக திட்ட அறிக்கை / சாத்தியக்கூறு பர்ச்சா",
+  },
+  "Business premises / place proof": {
+    en: "Business premises / place proof",
+    hi: "दुकान/व्यवसाय स्थल का प्रमाण (किरायानामा या स्वामित्व)",
+    hinglish: "Business premises / Jagah ka proof",
+    mr: "व्यवसाय जागेचा पुरावा (भाडेकरार किंवा मालकी हक्क)",
+    bn: "ব্যবসায়িক স্থানের প্রমাণপত্র (ভাড়া চুক্তি বা মালিকানা)",
+    te: "వ్యాపార స్థల రుజువు (అద్దె లేదా స్వంత పత్రాలు)",
+    ta: "வணிக வளாகம் / இடத்திற்கான சான்று",
+  },
+  "Passport size photographs": {
+    en: "Passport size photographs",
+    hi: "पासपोर्ट साइज फोटो (2 प्रतियां)",
+    hinglish: "Passport size photos",
+    mr: "पासपोर्ट आकाराची छायाचित्रे",
+    bn: "পাসপোর্ট সাইজের রঙিন ছবি",
+    te: "పాస్‌పోర్ట్ సైజు ఫోటోలు",
+    ta: "பாஸ்போர்ட் அளவு புகைப்படங்கள்",
+  },
+
+  // Strengths
+  "Direct personal relationship with village community & elders": {
+    en: "Direct personal relationship with village community & elders",
+    hi: "गाँव के समुदाय और बुजुर्गों से सीधा और व्यक्तिगत संबंध",
+    hinglish: "Gaon ke logon aur buzurgon se seedha parichay",
+    mr: "गावातील समुदाय आणि ज्येष्ठ नागरिकांशी थेट व वैयक्तिक संबंध",
+    bn: "গ্রামের মানুষ এবং মুরব্বিদের সাথে সরাসরি ব্যক্তিগত সুসম্পর্ক",
+    te: "గ్రామస్తులు మరియు పెద్దలతో ప్రత్యక్ష వ్యక్తిగత సంబంధాలు",
+    ta: "கிராம மக்கள் மற்றும் பெரியவர்களுடன் நேரடி தனிப்பட்ட உறவு",
+  },
+  "Lower fixed overhead expenses compared to urban establishments": {
+    en: "Lower fixed overhead expenses compared to urban establishments",
+    hi: "शहरों की तुलना में दुकान का किराया व स्थायी खर्चे बहुत कम",
+    hinglish: "Shehar ke mukable dukaan ka kiraya aur kharche bohot kam",
+    mr: "शहरातील दुकानांच्या तुलनेत भाडे व स्थिर खर्च खूप कमी",
+    bn: "শহরের তুলনায় দোকান ভাড়া এবং স্থায়ী পরিচালনা ব্যয় অত্যন্ত কম",
+    te: "పట్టణాలతో పోలిస్తే స్థిర నిర్వహణ ఖర్చులు మరియు అద్దె చాలా తక్కువ",
+    ta: "நகரங்களை விட நிலையான செலவுகள் மற்றும் வாடகை மிகக் குறைவு",
+  },
+  "Availability of local raw materials within walking distance": {
+    en: "Availability of local raw materials within walking distance",
+    hi: "स्थानीय कच्चा माल पास में ही आसानी से उपलब्ध",
+    hinglish: "Local raw material aas-paas hi aasaani se uplabdh",
+    mr: "स्थानिक कच्चा माल जवळच सहज उपलब्ध",
+    bn: "স্থানীয় কাঁচামাল হাতের কাছেই সহজে সহজলভ্য",
+    te: "స్థానిక ముడి సరుకులు సమీపంలోనే సులభంగా లభించడం",
+    ta: "உள்ளூர் மூலப்பொருட்கள் அருகிலேயே எளிதாகக் கிடைப்பது",
+  },
+
+  // Weaknesses
+  "Limited initial cash reserve for unexpected equipment breakdown": {
+    en: "Limited initial cash reserve for unexpected equipment breakdown",
+    hi: "अचानक मशीनरी खराब होने की स्थिति में सीमित शुरुआती नकदी",
+    hinglish: "Machine kharab hone par emergency cash reserve kam hona",
+    mr: "यंत्रसामग्रीच्या अचानक बिघाडासाठी मर्यादित सुरुवातीचा रोख साठा",
+    bn: "যন্ত্রপাতি হঠাৎ নষ্ট হলে মেরামতের জন্য সীমিত জরুরি নগদ তহবিল",
+    te: "యంత్రాల మరమ్మతుల కోసం ప్రారంభంలో పరిమిత నగదు నిల్వలు ఉండటం",
+    ta: "இயந்திர பழுது போன்ற எதிர்பாராத செலவுகளுக்கு ஆரம்ப பண கையிருப்பு குறைவு",
+  },
+  "Reliance on seasonal agricultural harvest payment cycles": {
+    en: "Reliance on seasonal agricultural harvest payment cycles",
+    hi: "फसल कटाई और मौसमी कृषि भुगतान चक्र पर ग्राहकों की निर्भरता",
+    hinglish: "Fasal aane par payment milne ki aadat par nirbharta",
+    mr: "पीक कापणी आणि हंगामी शेती उत्पन्नाच्या चक्रावर अवलंबित्व",
+    bn: "ফসল ওঠার মৌসুম এবং কৃষিনির্ভর অর্থপ্রদান চক্রের ওপর নির্ভরতা",
+    te: "రైతుల పంట చేతికి వచ్చే కాలంపై ఆధారపడి చెల్లింపులు జరగడం",
+    ta: "பயிர் அறுவடை மற்றும் பருவகால விவசாய பண சுழற்சியை நம்பியிருத்தல்",
+  },
+  "Limited formal bookkeeping or computer invoice systems": {
+    en: "Limited formal bookkeeping or computer invoice systems",
+    hi: "कंप्यूटर बिलिंग या औपचारिक बहीखाता प्रणाली का अभाव",
+    hinglish: "Computer billing ya pakka hisab-kitab na hona",
+    mr: "औपचारिक हिशेब किंवा संगणकीय बिलिंग प्रणालीचा अभाव",
+    bn: "কম্পিউটারাইজড বিলিং বা আনুষ্ঠানিক হিসাব সংরক্ষণের অভাব",
+    te: "కంప్యూటర్ బిల్లింగ్ లేదా సరైన ఖాతా పుస్తకాల నిర్వహణ లేకపోవడం",
+    ta: "முறையான கணக்கு புத்தகங்கள் அல்லது கணினி ரசீது முறை இல்லாமை",
+  },
+
+  // Opportunities (SWOT)
+  "Expanding to adjacent gram panchayats through weekly haats": {
+    en: "Expanding to adjacent gram panchayats through weekly haats",
+    hi: "साप्ताहिक हाट बाज़ारों के माध्यम से पास की ग्राम पंचायतों में विस्तार",
+    hinglish: "Weekly haat ke zariye paas ki panchayaton me vistar",
+    mr: "साप्ताहिक बाजारांच्या माध्यमातून लगतच्या ग्रामपंचायतींमध्ये व्यवसाय विस्तार",
+    bn: "সাপ্তাহিক হাটের মাধ্যমে পার্শ্ববর্তী গ্রাম পঞ্চায়েতগুলোতে ব্যবসা সম্প্রসারণ",
+    te: "వారపు సంతల ద్వారా సమీప గ్రామ పంచాయతీలకు వ్యాపారాన్ని విస్తరించడం",
+    ta: "வாராந்திர சந்தைகள் மூலம் அருகிலுள்ள கிராம ஊராட்சிகளுக்கு விரிவுபடுத்துதல்",
+  },
+  "Tapping government subsidy programs (PMEGP / Mudra / KCC)": {
+    en: "Tapping government subsidy programs (PMEGP / Mudra / KCC)",
+    hi: "सरकारी सब्सिडी योजनाओं (PMEGP / मुद्रा / केसीसी) का लाभ उठाना",
+    hinglish: "Sarkari subsidy schemes (PMEGP / Mudra / KCC) ka fayda uthana",
+    mr: "सरकारी अनुदान योजनांचा (PMEGP / मुद्रा / KCC) लाभ घेणे",
+    bn: "সরকারি ভর্তুকি প্রকল্পের (PMEGP / মুদ্রা / KCC) আর্থিক সুবিধা গ্রহণ",
+    te: "ప్రభుత్వ రాయితీ పథకాలను (PMEGP / ముద్రా / KCC) ఉపయోగించుకోవడం",
+    ta: "அரசு மானிய திட்டங்களை (PMEGP / முத்ரா / KCC) பயன்படுத்திக் கொள்ளுதல்",
+  },
+  "Bundling complementary products for village families": {
+    en: "Bundling complementary products for village families",
+    hi: "ग्रामीण परिवारों के लिए रोज़मर्रा के सहायक उत्पादों का कॉम्बो तैयार करना",
+    hinglish: "Gaon ke parivaron ke liye zaroori cheezon ka combo banana",
+    mr: "ग्रामीण कुटुंबांसाठी दैनंदिन गरजेच्या पूरक वस्तूंचे संच देणे",
+    bn: "গ্রামীণ পরিবারের জন্য নিত্যপ্রয়োজনীয় পণ্যের যৌথ প্যাকেজ সরবরাহ",
+    te: "గ్రామ కుటుంబాల కోసం నిత్యవసర అనుబంధ ఉత్పత్తులను కలిపి అందించడం",
+    ta: "கிராம குடும்பங்களுக்கு தேவையான தொடர்புடைய பொருட்களை இணைத்து வழங்குதல்",
+  },
+
+  // Threats
+  "Sudden price inflation in input raw materials / animal feed": {
+    en: "Sudden price inflation in input raw materials / animal feed",
+    hi: "कच्चे माल या पशु आहार की कीमतों में अचानक वृद्धि",
+    hinglish: "Raw material ya pashu aahar ki keemat badhne ka risk",
+    mr: "कच्चा माल किंवा पशुखाद्याचे दर वाढल्यास होणारा तोटा",
+    bn: "কাঁচামাল বা পশুখাদ্যের মূল্যে আকস্মিক মূল্যবৃদ্ধি",
+    te: "ముడి సరుకులు లేదా దాణా ధరలు పెరిగితే వచ్చే నష్ట భయం",
+    ta: "தீவனம் அல்லது மூலப்பொருள் விலை உயர்வின் பாதிப்பு",
+  },
+  "Weather interruptions or localized power cuts": {
+    en: "Weather interruptions or localized power cuts",
+    hi: "मौसम की खराबी या स्थानीय बिजली कटौती की समस्या",
+    hinglish: "Mausam ki kharabi ya bijli katne ki samasya",
+    mr: "हवामानातील बदल किंवा स्थानिक वीज पुरवठ्यातील व्यत्यय",
+    bn: "প্রতিকূল আবহাওয়া বা স্থানীয় লোডশেডিং ও বিদ্যুৎ বিভ্রাট",
+    te: "వాతావరణ మార్పులు లేదా స్థానిక విద్యుత్ సరఫరాలో అంతరాయాలు",
+    ta: "வானிலை தடங்கல்கள் அல்லது உள்ளூர் மின்வெட்டு சிக்கல்கள்",
+  },
+  "Credit demands (udhaar) from relatives and neighbors": {
+    en: "Credit demands (udhaar) from relatives and neighbors",
+    hi: "रिश्तेदारों और पड़ोसियों द्वारा अत्यधिक उधारी की मांग",
+    hinglish: "Rishtedaron aur padosiyon dwara udhaar ki maang",
+    mr: "नातेवाईक आणि शेजाऱ्यांकडून उधारीची मागणी",
+    bn: "আত্মীয়-স্বজন এবং প্রতিবেশীদের অতিরিক্ত বাকির দাবি",
+    te: "బంధువులు మరియు ఇరుగుపొరుగు వారి నుండి అప్పుల (ఉధార్) ఒత్తిడి",
+    ta: "உறவினர்கள் மற்றும் அண்டை வீட்டாரிடமிருந்து கடன் (உதார்) கேட்கும் நெருக்கடி",
+  },
+
+  // Candidate Niches
+  "Value-added packaging (e.g. bottled fresh milk, paneer, curd packets)": {
+    en: "Value-added packaging (e.g. bottled fresh milk, paneer, curd packets)",
+    hi: "मूल्य-संवर्धित पैकेजिंग (जैसे बोतल बंद ताजा दूध, पनीर, दही के पैकेट)",
+    hinglish: "Value-added packaging (Paneer, Dahi, Packaged Milk)",
+    mr: "मूल्यवर्धित पॅकेजिंग (उदा. बाटलीबंद ताजे दूध, पनीर, दह्याचे पाकीट)",
+    bn: "মূল্য সংযোজিত প্যাকেজিং (যেমন বোতলজাত খাঁটি দুধ, পনির, দইয়ের প্যাকেট)",
+    te: "విలువ జోడించిన ప్యాకేజింగ్ (ఉదా: సీసా పాలు, పన్నీర్, పెరుగు ప్యాకెట్లు)",
+    ta: "மதிப்பு கூட்டப்பட்ட பேக்கேஜிங் (எ.கா: பாட்டில் பால், பன்னீர், தயிர் பாக்கெட்டுகள்)",
+  },
+  "Home delivery subscription for village teachers & government staff": {
+    en: "Home delivery subscription for village teachers & government staff",
+    hi: "गाँव के शिक्षकों और सरकारी कर्मचारियों के लिए होम डिलीवरी मासिक सदस्यता",
+    hinglish: "Teachers aur sarkari staff ke liye home delivery subscription",
+    mr: "गावातील शिक्षक व सरकारी कर्मचाऱ्यांसाठी थेट घरपोच मासिक सेवा",
+    bn: "গ্রামের শিক্ষক এবং সরকারি চাকরিজীবীদের জন্য হোম ডেলিভারি মাসিক সেবা",
+    te: "గ్రామ ఉపాధ్యాయులు & ప్రభుత్వ ఉద్యోగుల కోసం హోమ్ డెలివరీ సబ్‌స్క్రిప్షన్",
+    ta: "கிராமத்து ஆசிரியர்கள் & அரசு ஊழியர்களுக்கான டோர் டெலிவரி மாதாந்திர சேவை",
+  },
+  "Seasonal festival bulk packages and weekly haat stalls": {
+    en: "Seasonal festival bulk packages and weekly haat stalls",
+    hi: "त्योहारों के अवसर पर थोक पैक और साप्ताहिक हाट बाज़ार स्टॉल",
+    hinglish: "Teohar bulk packs aur weekly haat stalls",
+    mr: "सण-उत्सवांच्या काळात घाऊक संच आणि साप्ताहिक बाजारात स्टॉल",
+    bn: "উৎসবের মরসুমে পাইকারি প্যাকেজ এবং সাপ্তাহিক হাটে বিশেষ স্টল",
+    te: "పండుగల ప్రత్యేక ప్యాకేజీలు మరియు వారపు సంతలలో ప్రత్యేక స్టాళ్ళు",
+    ta: "பண்டிகை கால மொத்த தொகுப்புகள் மற்றும் வாராந்திர சந்தை கடைகள்",
+  },
+  "Tie-up with local self-help groups (SHGs / Sakhi Mandals)": {
+    en: "Tie-up with local self-help groups (SHGs / Sakhi Mandals)",
+    hi: "स्थानीय महिला स्वयं सहायता समूहों (SHG / सखी मंडल) के साथ साझेदारी",
+    hinglish: "Local SHG (Sakhi Mandal) ke sath tie-up",
+    mr: "स्थानिक महिला बचत गट (SHG / सखी मंडळ) यांच्याशी भागीदारी",
+    bn: "স্থানীয় স্বনির্ভর দল (SHG / সখী মণ্ডল)-এর সাথে ব্যবসায়িক চুক্তি",
+    te: "స్థానిక స్వయం సహాయక సంఘాలతో (SHG / సఖీ మండలి) భాగస్వామ్యం",
+    ta: "உள்ளூர் மகளிர் சுயஉதவி குழுக்களுடன் (SHG) கூட்டு ஒப்பந்தம்",
+  },
+
+  // Evidence
+  "High daily consumption with lack of hygienic local branded alternatives": {
+    en: "High daily consumption with lack of hygienic local branded alternatives",
+    hi: "दैनिक खपत बहुत अधिक है लेकिन स्वच्छ व स्थानीय ब्रांडेड विकल्पों की भारी कमी है",
+    hinglish: "Daily consumption zyada hai par hygienic local brand nahi hai",
+    mr: "दैनिक वापर खूप जास्त आहे पण स्वच्छ व दर्जेदार स्थानिक पर्यायांचा अभाव आहे",
+    bn: "দৈনন্দিন চাহিদা ব্যাপক কিন্তু স্বাস্থ্যকর স্থানীয় ব্র্যান্ডেড বিকল্পের চরম অভাব",
+    te: "రోజువారీ వినియోగం ఎక్కువ ఉన్నప్పటికీ పరిశుభ్రమైన స్థానిక బ్రాండెడ్ ఉత్పత్తులు లేవు",
+    ta: "தினசரி நுகர்வு அதிகம், ஆனால் சுகாதாரமான உள்ளூர் பிராண்டட் தயாரிப்புகள் இல்லை",
+  },
+  "Rising disposable income among semi-urban and rural service workers": {
+    en: "Rising disposable income among semi-urban and rural service workers",
+    hi: "कस्बों और ग्रामीण नौकरीपेशा परिवारों की क्रय शक्ति व आमदनी में लगातार वृद्धि",
+    hinglish: "Gaon ke naukri-pesha logon ki aamdani me lagatar badhotri",
+    mr: "ग्रामीण व निमशहरी भागातील नोकरदार कुटुंबांच्या उत्पन्नात वाढ",
+    bn: "আধা-শহুরে ও গ্রামীণ চাকরিজীবী পরিবারগুলোর ক্রয়ক্ষমতা ও আয় বৃদ্ধি পাচ্ছে",
+    te: "గ్రామీణ మరియు పట్టణ ఉద్యోగుల ఖర్చు చేయగల ఆదాయం పెరుగుతోంది",
+    ta: "கிராமப்புற மற்றும் சிறுநகர ஊழியர்களின் செலவு செய்யும் வருமானம் உயர்ந்துள்ளது",
+  },
+  "Local buyers travel 8-10 km to tehsil market for better quality": {
+    en: "Local buyers travel 8-10 km to tehsil market for better quality",
+    hi: "अच्छी गुणवत्ता पाने के लिए स्थानीय ग्राहक 8-10 किमी दूर तहसील बाज़ार जाते हैं",
+    hinglish: "Achi quality ke liye log 8-10 km door tehsil bazaar jate hain",
+    mr: "उत्कृष्ट दर्जा मिळवण्यासाठी स्थानिक ग्राहक 8-10 किमी दूर तहसील बाजारात जातात",
+    bn: "ভালো মানের পণ্যের জন্য স্থানীয় ক্রেতারা ৮-১০ কিমি দূরের তহশিল বাজারে যান",
+    te: "మంచి నాణ్యత కోసం స్థానిక కస్టమర్లు 8-10 కిమీ దూరంలోని తాలూకా మార్కెట్‌కు వెళ్తున్నారు",
+    ta: "நல்ல தரத்திற்காக உள்ளூர் மக்கள் 8-10 கிமீ தொலைவிலுள்ள தாலுகா சந்தைக்கு செல்கின்றனர்",
+  },
+
+  // Future expansion paths
+  "Supply to nearby school mid-day meal or anganwadi centers": {
+    en: "Supply to nearby school mid-day meal or anganwadi centers",
+    hi: "पास के स्कूलों के मिड-डे मील या आंगनवाड़ी केंद्रों में पौष्टिक आपूर्ति",
+    hinglish: "Paas ke school mid-day meal ya anganwadi me supply",
+    mr: "जवळच्या शाळांमधील मध्यान्ह भोजन किंवा अंगणवाडी केंद्रांना पुरवठा",
+    bn: "নিকটস্থ স্কুলের মিড-ডে মিল বা অঙ্গনওয়াড়ি কেন্দ্রে পুষ্টিকর খাদ্য সরবরাহ",
+    te: "సమీప పాఠశాలల మధ్యాహ్న భోజనం లేదా అంగన్‌వాడీ కేంద్రాలకు సరఫరా చేయడం",
+    ta: "அருகிலுள்ள பள்ளி மதிய உணவு அல்லது அங்கன்வாடி மையங்களுக்கு விநியோகம்",
+  },
+  "Collaborate with dairy cooperatives or agricultural FPOs": {
+    en: "Collaborate with dairy cooperatives or agricultural FPOs",
+    hi: "डेयरी सहकारी समितियों या कृषक उत्पादक संगठनों (FPO) के साथ सहयोग",
+    hinglish: "Dairy cooperatives ya Kisan FPO ke sath milkar kaam karein",
+    mr: "दुग्ध सहकारी संस्था किंवा शेतकरी उत्पादक कंपन्यांशी (FPO) सहकार्य",
+    bn: "দুগ্ধ সমবায় সমিতি বা কৃষক উৎপাদক সংস্থার (FPO) সাথে যৌথ উদ্যোগ",
+    te: "డైరీ సహకార సంఘాలు లేదా రైతు ఉత్పత్తిదారుల సంస్థలతో (FPO) భాగస్వామ్యం",
+    ta: "பால் கூட்டுறவு சங்கங்கள் அல்லது உழவர் உற்பத்தியாளர் அமைப்புகளுடன் (FPO) கூட்டு",
+  },
+  "Add complementary daily-use FMCG goods to store inventory": {
+    en: "Add complementary daily-use FMCG goods to store inventory",
+    hi: "दुकान में दैनिक उपयोग के सहायक एफएमसीजी उत्पाद भी जोड़ें",
+    hinglish: "Dukaan me rojana use hone wale FMCG products bhi jodein",
+    mr: "दुकानात दैनंदिन वापराच्या पूरक एफएमसीजी वस्तूंचा समावेश करा",
+    bn: "দোকানের স্টকে নিত্যপ্রয়োজনীয় অন্যান্য খাদ্য ও প্রসাধন সামগ্রী যুক্ত করুন",
+    te: "షాపులో రోజువారీ ఉపయోగపడే ఇతర నిత్యవసర వస్తువులను చేర్చడం",
+    ta: "கடையின் இருப்பில் தினசரி பயன்பாட்டு எப்எம்சிஜி பொருட்களை சேர்த்தல்",
+  },
+
+  // Risk Factors
+  "Vulnerability to input feed or raw material price increases": {
+    en: "Vulnerability to input feed or raw material price increases",
+    hi: "पशु आहार या कच्चे माल की कीमतों में बढ़ोतरी का वित्तीय जोखिम",
+    hinglish: "Raw material ya fodder ki keemat badhne ka risk",
+    mr: "कच्चा माल किंवा पशुखाद्याचे दर वाढल्यास होणारा तोटा",
+    bn: "পশুখাদ্য বা কাঁচামালের মূল্যবৃদ্ধির প্রতি সংবেদনশীলতা",
+    te: "ముడి సరుకులు లేదా దాణా ధరలు పెరిగితే వచ్చే నష్ట భయం",
+    ta: "தீவனம் அல்லது மூலப்பொருள் விலை உயர்வின் பாதிப்பு",
+  },
+  "Seasonal drop in footfall during peak harvest or monsoon weeks": {
+    en: "Seasonal drop in footfall during peak harvest or monsoon weeks",
+    hi: "फसल कटाई के व्यस्त समय या भारी बारिश के दौरान ग्राहकों की संख्या में मौसमी कमी",
+    hinglish: "Barsaat ya kheti ke mausam me grahakon ki sankhya kam hona",
+    mr: "कापणीचा हंगाम किंवा पावसाळ्यात ग्राहकांच्या गर्दीत तात्पुरती घट",
+    bn: "ফসল তোলার ভরা মরসুমে বা বর্ষার দিনগুলোতে ক্রেতাদের আনাগোনা কমে যাওয়া",
+    te: "పంట కోతల సమయంలో లేదా వర్షాకాలంలో కస్టమర్ల రాక తగ్గడం",
+    ta: "அறுவடை காலம் அல்லது மழைக்காலத்தில் வாடிக்கையாளர் வருகை குறைதல்",
+  },
+  "High dependence on key repeat village customers": {
+    en: "High dependence on key repeat village customers",
+    hi: "गाँव के गिने-चुने नियमित ग्राहकों पर अत्यधिक निर्भरता",
+    hinglish: "Gaon ke kuch regular grahakon par bohot zyada nirbharta",
+    mr: "गावातील मोजक्याच नियमित ग्राहकांवर जास्त अवलंबित्व",
+    bn: "গ্রামের নির্দিষ্ট কয়েকজন নিয়মিত ক্রেতার ওপর অতিরিক্ত নির্ভরশীলতা",
+    te: "గ్రామంలోని కొంతమంది రెగ్యులర్ కస్టమర్లపైనే అధికంగా ఆధారపడటం",
+    ta: "குறிப்பிட்ட சில வழக்கமான கிராமத்து வாடிக்கையாளர்களை மட்டுமே நம்பியிருத்தல்",
+  },
+
+  // Recommendations
+  "Maintain a cash reserve equivalent to at least 1-2 months of operational expenses.": {
+    en: "Maintain a cash reserve equivalent to at least 1-2 months of operational expenses.",
+    hi: "कम से कम 1-2 महीने के परिचालन खर्च के बराबर नकद आपातकालीन रिजर्व हमेशा रखें।",
+    hinglish: "Kam se kam 1-2 mahine ke kharche barabar cash reserve rakhein.",
+    mr: "किमान 1-2 महिन्यांच्या दैनंदिन खर्चाएवढा रोख आपत्कालीन साठा नेहमी बाळगा.",
+    bn: "কমপক্ষে ১-২ মাসের পরিচালনা ব্যয়ের সমপরিমাণ জরুরি নগদ সঞ্চয় আলাদা রাখুন।",
+    te: "కనీసం 1-2 నెలల నిర్వహణ ఖర్చులకు సరిపడా నగదు నిల్వను అత్యవసర నిధిగా ఉంచండి.",
+    ta: "குறைந்தபட்சம் 1-2 மாத செயல்பாட்டு செலவுகளுக்கு சமமான பண இருப்பு வைத்திருங்கள்.",
+  },
+  "Form relationships with at least 2 alternate wholesale suppliers to avoid supply squeeze.": {
+    en: "Form relationships with at least 2 alternate wholesale suppliers to avoid supply squeeze.",
+    hi: "सप्लाई रुकने से बचने के लिए कम से कम 2 वैकल्पिक थोक सप्लायरों से संपर्क बनाए रखें।",
+    hinglish: "Supply na ruke isliye kam se kam 2 wholesale suppliers se parichay rakhein.",
+    mr: "मालाचा तुटवडा टाळण्यासाठी किमान 2 पर्यायी घाऊक पुरवठादारांशी संपर्क ठेवा.",
+    bn: "সরবরাহ সংকট এড়াতে কমপক্ষে ২টি বিকল্প পাইকারি সরবরাহকারীর সাথে সম্পর্ক রাখুন।",
+    te: "సరుకు కొరత రాకుండా కనీసం ఇద్దరు ప్రత్యామ్నాయ హోల్‌సేల్ సరఫరాదారులతో సంబంధాలు కలిగి ఉండండి.",
+    ta: "விநியோக தடையைத் தவிர்க்க குறைந்தது 2 மாற்று மொத்த விற்பனையாளர்களுடன் தொடர்பில் இருங்கள்.",
+  },
+  "Limit informal customer credit (udhaar) and encourage UPI / digital instant payments.": {
+    en: "Limit informal customer credit (udhaar) and encourage UPI / digital instant payments.",
+    hi: "अत्यधिक उधारी से बचें और ग्राहकों को यूपीआई या नकद भुगतान के लिए प्रोत्साहित करें।",
+    hinglish: "Zyada udhaar na dein aur UPI / cash payment ko badhava dein.",
+    mr: "विनाकारण उधारी देणे टाळा आणि ग्राहकांना UPI किंवा रोख पेमेंटसाठी प्रोत्साहन द्या.",
+    bn: "অনানুষ্ঠানিক বাকি সীমিত করুন এবং ইউপিআই বা নগদ তাৎক্ষণিক অর্থপ্রদানকে উৎসাহিত করুন।",
+    te: "అనవసరమైన అప్పులు (ఉధార్) తగ్గించి, UPI లేదా నగదు చెల్లింపులను ప్రోత్సహించండి.",
+    ta: "அதிகப்படியான கடனை (உதார்) தவிர்த்து, UPI அல்லது உடனடி பணப் பரிவர்த்தனையை ஊக்குவிக்கவும்.",
+  },
+};
+
+export function translateDynamicPhrase(phrase: string = "", lang: string = "hi"): string {
+  if (!phrase) return phrase;
+  const trimmed = phrase.trim();
+  const code = (lang || "hi").toLowerCase();
+  if (DYNAMIC_PHRASE_DICTIONARY[trimmed]?.[code]) {
+    return DYNAMIC_PHRASE_DICTIONARY[trimmed][code];
+  }
+  return phrase;
+}
+
 export function getUI(key: string, lang: string = "hi", fallback: string = ""): string {
   const code = (lang || "hi").toLowerCase();
   if (COMMON_UI[key]?.[code]) {
@@ -2251,6 +2628,7 @@ export default {
   translateDemand,
   translateCategory,
   translateRepaymentPeriod,
+  translateDynamicPhrase,
   PAGE_BADGES,
   COMMON_UI,
 };

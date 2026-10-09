@@ -464,7 +464,19 @@ export default function BusinessHistoryModal({
             />
             <input
               type="text"
-              placeholder={isHi ? "व्यापार नाम, जिला या रिपोर्ट कोड खोजें..." : "Search by name, district, or report code..."}
+              placeholder={
+                lang === "bn"
+                  ? "ব্যবসার নাম, জেলা বা রিপোর্ট কোড দিয়ে খুঁজুন..."
+                  : lang === "mr"
+                  ? "व्यवसायाचे नाव, जिल्हा किंवा रिपोर्ट कोड शोधा..."
+                  : lang === "te"
+                  ? "వ్యాపార పేరు, జిల్లా లేదా రిపోర్ట్ కోడ్ ద్వారా శోధించండి..."
+                  : lang === "ta"
+                  ? "வணிகப் பெயர், மாவட்டம் அல்லது அறிக்கை குறியீட்டின் மூலம் தேடுங்கள்..."
+                  : isHi
+                  ? "व्यापार नाम, जिला या रिपोर्ट कोड खोजें..."
+                  : "Search by name, district, or report code..."
+              }
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
@@ -513,7 +525,7 @@ export default function BusinessHistoryModal({
                 cursor: "pointer",
               }}
             >
-              {t.filterAll || (isHi ? "सभी सहेजे गए मूल्यांकन" : "All Saved Evaluations")} ({evaluations.length})
+              {t.filterAll || (lang === "bn" ? "সকল সংরক্ষিত মূল্যায়ন" : lang === "mr" ? "सर्व सेव्ह केलेले मूल्यांकन" : lang === "te" ? "అన్ని సేవ్ చేసిన మూల్యాంకనాలు" : lang === "ta" ? "அனைத்து சேமிக்கப்பட்ட மதிப்பீடுகள்" : isHi ? "सभी सहेजे गए मूल्यांकन" : "All Saved Evaluations")} ({evaluations.length})
             </button>
 
             {currentBusiness?.business && (
@@ -531,7 +543,7 @@ export default function BusinessHistoryModal({
                   cursor: "pointer",
                 }}
               >
-                {t.filterCurrent || (isHi ? "केवल वर्तमान व्यापार" : "Current Business Only")}:{" "}
+                {t.filterCurrent || (lang === "bn" ? "কেবল বর্তমান ব্যবসা" : lang === "mr" ? "केवळ सध्याचा व्यवसाय" : lang === "te" ? "ప్రస్తుత వ్యాపారం మాత్రమే" : lang === "ta" ? "தற்போதைய வணிகம் மட்டும்" : isHi ? "केवल वर्तमान व्यापार" : "Current Business Only")}:{" "}
                 <strong>{currentBusiness.business}</strong>
               </button>
             )}
@@ -554,7 +566,19 @@ export default function BusinessHistoryModal({
                   gap: "4px",
                 }}
               >
-                <span>{isHi ? `तुलना: ${compareEvalIds.length}/2 चयनित` : `Comparing: ${compareEvalIds.length}/2`}</span>
+                <span>
+                  {lang === "bn"
+                    ? `তুলনা: ${compareEvalIds.length}/২ নির্বাচিত`
+                    : lang === "mr"
+                    ? `तुलना: ${compareEvalIds.length}/2 निवडलेले`
+                    : lang === "te"
+                    ? `పోలిక: ${compareEvalIds.length}/2 ఎంచుకోబడింది`
+                    : lang === "ta"
+                    ? `ஒப்பீடு: ${compareEvalIds.length}/2 தேர்ந்தெடுக்கப்பட்டது`
+                    : isHi
+                    ? `तुलना: ${compareEvalIds.length}/2 चयनित`
+                    : `Comparing: ${compareEvalIds.length}/2`}
+                </span>
                 <X size={12} />
               </button>
             )}
@@ -829,14 +853,32 @@ export default function BusinessHistoryModal({
                 <Building2 size={28} />
               </div>
               <h4 style={{ margin: "0 0 6px", fontSize: "16px", fontWeight: "700", color: "#1e293b" }}>
-                {t.emptyHistoryTitle || (isHi ? "कोई सहेजा गया मूल्यांकन नहीं मिला" : "No Saved Evaluations Found")}
+                {t.emptyHistoryTitle || (lang === "bn" ? "কোন সংরক্ষিত মূল্যায়ন পাওয়া যায়নি" : lang === "mr" ? "कोणतेही सेव्ह केलेले मूल्यांकन आढळले नाही" : lang === "te" ? "సేవ్ చేసిన మూల్యాంకనాలు ఏవీ కనుగొనబడలేదు" : lang === "ta" ? "சேமிக்கப்பட்ட மதிப்பீடுகள் எதுவும் கிடைக்கவில்லை" : isHi ? "कोई सहेजा गया मूल्यांकन नहीं मिला" : "No Saved Evaluations Found")}
               </h4>
               <p style={{ margin: "0 0 18px", fontSize: "13.5px", color: "#64748b", maxWidth: "460px" }}>
                 {searchTerm
-                  ? (isHi ? "आपकी खोज के अनुसार कोई रिकॉर्ड नहीं मिला। कृपया अलग नाम खोजें।" : "No saved evaluations match your search query.")
-                  : (t.emptyHistoryDesc || (isHi
-                    ? "अपने व्यापार को Aiven MySQL में सुरक्षित करने के लिए सारांश पेज पर 'डेटाबेस में सहेजें' बटन दबाएं।"
-                    : "Click 'Save Evaluation' in Overview to securely store your business in Aiven MySQL."))
+                  ? (lang === "bn"
+                      ? "আপনার অনুসন্ধানের সাথে মিল রেখে কোন রেকর্ড পাওয়া যায়নি।"
+                      : lang === "mr"
+                      ? "आपल्या शोधानुसार कोणतीही नोंद आढळली नाही."
+                      : lang === "te"
+                      ? "మీ శోధనకు సరిపోలే రికార్డులు ఏవీ కనుగొనబడలేదు."
+                      : lang === "ta"
+                      ? "உங்கள் தேடலுக்குரிய பதிவுகள் எதுவும் கிடைக்கவில்லை."
+                      : isHi
+                      ? "आपकी खोज के अनुसार कोई रिकॉर्ड नहीं मिला। कृपया अलग नाम खोजें।"
+                      : "No saved evaluations match your search query.")
+                  : (t.emptyHistoryDesc || (lang === "bn"
+                      ? "আপনার ব্যবসা Aiven MySQL-এ সুরক্ষিত করতে সারসংক্ষেপ পৃষ্ঠায় 'ডাটাবেসে সংরক্ষণ করুন' ক্লিক করুন।"
+                      : lang === "mr"
+                      ? "आपला व्यवसाय Aiven MySQL मध्ये जतन करण्यासाठी विहंगावलोकन पृष्ठावरील 'मूल्यांकन सेव्ह करा' बटणावर क्लिक करा."
+                      : lang === "te"
+                      ? "మీ వ్యాపారాన్ని Aiven MySQL లో భద్రపరచడానికి స్థూలదృష్టి పేజీలో 'మూల్యాంకనాన్ని సేవ్ చేయండి' పై క్లిక్ చేయండి."
+                      : lang === "ta"
+                      ? "உங்கள் வணிகத்தை Aiven MySQL-ல் சேமிக்க மேலோட்டப் பக்கத்தில் உள்ள 'மதிப்பீட்டைச் சேமி' என்பதைக் கிளிக் செய்யவும்."
+                      : isHi
+                      ? "अपने व्यापार को Aiven MySQL में सुरक्षित करने के लिए सारांश पेज पर 'डेटाबेस में सहेजें' बटन दबाएं।"
+                      : "Click 'Save Evaluation' in Overview to securely store your business in Aiven MySQL."))
                 }
               </p>
               {searchTerm && (
@@ -854,7 +896,17 @@ export default function BusinessHistoryModal({
                     cursor: "pointer",
                   }}
                 >
-                  {isHi ? "खोज साफ़ करें" : "Clear Search Filter"}
+                  {lang === "bn"
+                    ? "অনুসন্ধান মুছুন"
+                    : lang === "mr"
+                    ? "शोध साफ करा"
+                    : lang === "te"
+                    ? "శోధనను క్లియర్ చేయండి"
+                    : lang === "ta"
+                    ? "தேடலை அழிக்கவும்"
+                    : isHi
+                    ? "खोज साफ़ करें"
+                    : "Clear Search Filter"}
                 </button>
               )}
             </div>

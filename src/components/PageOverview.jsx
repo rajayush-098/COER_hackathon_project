@@ -9,7 +9,6 @@ import {
   getPageBadge,
   translateVerdict,
   translateVerdictDescription,
-  translateCategory,
   translateDemand,
 } from "../utils/translationHelper";
 

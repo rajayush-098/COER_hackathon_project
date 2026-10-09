@@ -3,11 +3,10 @@ import {
   getPageBadge,
   translateCategory,
   translateRepaymentPeriod,
+  translateDynamicPhrase,
 } from "../utils/translationHelper";
 
 export default function PageGovtLoan({ result, formatCurrency, lang = "hi", onJumpPage }) {
-  const isHi = lang === "hi";
-
   const scheme = result.scheme_analysis ?? {};
   const matchedScheme = result.matched_scheme ?? {};
   const projectCost = scheme.project_cost ?? 0;
@@ -269,7 +268,7 @@ export default function PageGovtLoan({ result, formatCurrency, lang = "hi", onJu
             <div key={idx} className="step-card">
               <span className="step-badge">{idx + 1}</span>
               <h4>{lang === "hi" ? `चरण ${idx + 1}` : lang === "bn" ? `ধাপ ${idx + 1}` : lang === "mr" ? `टप्पा ${idx + 1}` : lang === "te" ? `దశ ${idx + 1}` : lang === "ta" ? `படி ${idx + 1}` : `Step ${idx + 1}`}</h4>
-              <p>{step}</p>
+              <p>{translateDynamicPhrase(step, lang)}</p>
             </div>
           ))}
         </div>
@@ -280,7 +279,7 @@ export default function PageGovtLoan({ result, formatCurrency, lang = "hi", onJu
         <div className="detail-card-head">
           <div>
             <h3>
-              {getUI("requiredDocsTitle", lang, "Required Documents Checklist")} ({documents.length} {lang === "hi" ? "दस्तावेज़" : lang === "bn" ? "নথিপত্র" : lang === "mr" ? "कागदपत्रे" : "Items"})
+              {getUI("requiredDocsTitle", lang, "Required Documents Checklist")} ({documents.length} {lang === "hi" ? "दस्तावेज़" : lang === "bn" ? "নথিপত্র" : lang === "mr" ? "कागदपत्रे" : lang === "te" ? "పత్రాలు" : lang === "ta" ? "ஆவணங்கள்" : "Items"})
             </h3>
             <p>
               {getUI("requiredDocsDesc", lang, "Official document checklist required by financing institutions for this scheme")}
@@ -310,7 +309,7 @@ export default function PageGovtLoan({ result, formatCurrency, lang = "hi", onJu
                 ✓
               </span>
               <div>
-                <strong>{doc}</strong>
+                <strong>{translateDynamicPhrase(doc, lang)}</strong>
                 <p>
                   {getUI("docItemHelp", lang, "Required for identity, eligibility & bank appraisal")}
                 </p>
