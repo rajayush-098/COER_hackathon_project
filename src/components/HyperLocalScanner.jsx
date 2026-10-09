@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { getDistrictCoordinates } from "../utils/geoUtils";
+import { API_ROUTES } from "../apiRoutes";
 
 // Haversine formula to calculate straight-line distance in kilometers
 function calculateHaversineDistance(lat1, lon1, lat2, lon2) {
@@ -466,6 +467,21 @@ out center;
               summaryString,
               scannedAt: new Date().toISOString(),
             });
+
+            // Asynchronously log scan counts to MySQL (fail-safe)
+            fetch(API_ROUTES.MARKET_SCAN_LOG, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                district,
+                radiusMeters: radius,
+                competitorCount: competitorsCount,
+                bankCount: banksCount,
+                mandiCount: mandisCount,
+                latitude: activeLat,
+                longitude: activeLng,
+              }),
+            }).catch(() => {});
           }
         }
       } catch (err) {
@@ -514,7 +530,7 @@ out center;
         setScanStatusMessage("");
       }
     },
-    [searchRadius, isHi, activeLat, activeLng, categoryTag, processElements]
+    [searchRadius, isHi, activeLat, activeLng, categoryTag, processElements, district]
   );
 
   // Explicit Scan handler: Single trigger for scanning, called exclusively by user clicking Scan

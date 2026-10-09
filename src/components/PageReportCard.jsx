@@ -1,9 +1,83 @@
+import { useState } from "react";
+import { Database, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
+import { API_ROUTES } from "../apiRoutes";
+
 export default function PageReportCard({ result, lang, formatCurrency }) {
   const isHi = lang === "hi";
+
+  const [saving, setSaving] = useState(false);
+  const [savedCode, setSavedCode] = useState(null);
+  const [saveError, setSaveError] = useState("");
 
   const handlePrint = () => {
     if (typeof window !== "undefined") {
       window.print();
+    }
+  };
+
+  const handleSaveToDatabase = async () => {
+    setSaving(true);
+    setSaveError("");
+    try {
+      const projectCost =
+        result.scheme_analysis?.project_cost ||
+        (result.investment ? Number(result.investment) / 0.1 : 0);
+      const marginCapital =
+        result.scheme_analysis?.margin_capital ||
+        result.scheme_analysis?.beneficiary_contribution ||
+        Number(result.investment) || 0;
+      const eligibleLoan = result.scheme_analysis?.eligible_loan || 0;
+
+      const profile = {
+        business_name: result.business || "Kisan Enterprise",
+        category: result.category || "General",
+        state: result.state || "Uttar Pradesh",
+        district: result.district || "Meerut",
+        block: result.block || "",
+        village_location: result.location || result.block || "",
+        pincode: result.pin || "",
+        experience_level: result.experience || "Beginner",
+        udyam_number: result.udyam_number || "",
+      };
+
+      const financials = {
+        project_cost: Number(projectCost) || 0,
+        margin_capital: Number(marginCapital) || 0,
+        eligible_loan: Number(eligibleLoan) || 0,
+        monthly_revenue: Number(result.monthly_revenue) || 0,
+        monthly_expenses: Number(result.monthly_expenses) || 0,
+        monthly_profit: Number(result.financial_analysis?.monthly_profit) || 0,
+        yearly_profit: Number(result.financial_analysis?.yearly_profit) || 0,
+        monthly_emi: Number(result.loan_affordability?.monthly_emi) || 0,
+        matched_scheme_name: result.scheme_analysis?.scheme_name || null,
+        interest_rate: result.scheme_analysis?.interest_rate != null ? Number(result.scheme_analysis.interest_rate) : null,
+        tenure_months: result.scheme_analysis?.loan_tenure_months != null ? Number(result.scheme_analysis.loan_tenure_months) : null,
+        moratorium_months: result.scheme_analysis?.moratorium_months != null ? Number(result.scheme_analysis.moratorium_months) : null,
+        affordability_status: result.loan_affordability?.affordability_status || null,
+        feasibility_verdict: result.feasibilityVerdict || result.feasibility || null,
+      };
+
+      const res = await fetch(API_ROUTES.SAVE_BUSINESS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profile,
+          financials,
+          reportPayload: result,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to save dossier to database");
+      }
+
+      setSavedCode(data.reportCode);
+    } catch (err) {
+      console.warn("Save Parcha to DB failed:", err);
+      setSaveError(err?.message || "Database connection is offline.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -23,7 +97,7 @@ export default function PageReportCard({ result, lang, formatCurrency }) {
       .split("")
       .reduce((acc, c) => acc + c.charCodeAt(0), 1234) * 53
   ) % 900000 + 100000;
-  const docId = `VAI-${docIdNum}`;
+  const docId = savedCode || `VAI-${docIdNum}`;
 
   return (
     <div className="side-page-content printable-page">
@@ -40,14 +114,91 @@ export default function PageReportCard({ result, lang, formatCurrency }) {
           </p>
         </div>
 
-        <button
-          type="button"
-          className="print-action-btn"
-          onClick={handlePrint}
-        >
-          {isHi ? "पर्चा प्रिंट करें (Print Parcha)" : "Print / Save PDF Report"}
-        </button>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center" }}>
+          <button
+            type="button"
+            onClick={handleSaveToDatabase}
+            disabled={saving}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "10px 18px",
+              borderRadius: "8px",
+              backgroundColor: savedCode ? "#059669" : "#0284c7",
+              color: "#ffffff",
+              border: "none",
+              fontWeight: "600",
+              fontSize: "14px",
+              cursor: saving ? "not-allowed" : "pointer",
+            }}
+          >
+            {saving ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>{isHi ? "सहेजा जा रहा है..." : "Saving..."}</span>
+              </>
+            ) : savedCode ? (
+              <>
+                <CheckCircle2 size={16} />
+                <span>{isHi ? "डेटाबेस में सुरक्षित" : "Saved to MySQL"}</span>
+              </>
+            ) : (
+              <>
+                <Database size={16} />
+                <span>{isHi ? "डेटाबेस में सहेजें (Save)" : "Save to MySQL"}</span>
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            className="print-action-btn"
+            onClick={handlePrint}
+          >
+            {isHi ? "पर्चा प्रिंट करें (Print Parcha)" : "Print / Save PDF Report"}
+          </button>
+        </div>
       </div>
+
+      {saveError && (
+        <div style={{
+          margin: "0 0 16px",
+          padding: "10px 14px",
+          borderRadius: "8px",
+          backgroundColor: "#fef2f2",
+          border: "1px solid #fecaca",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          color: "#991b1b",
+          fontSize: "13px"
+        }}>
+          <AlertCircle size={16} />
+          <span>{saveError}</span>
+        </div>
+      )}
+
+      {savedCode && (
+        <div style={{
+          margin: "0 0 16px",
+          padding: "10px 14px",
+          borderRadius: "8px",
+          backgroundColor: "#ecfdf5",
+          border: "1px solid #a7f3d0",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          color: "#065f46",
+          fontSize: "13.5px"
+        }}>
+          <CheckCircle2 size={18} color="#059669" />
+          <span>
+            {isHi ? "व्यापार पर्चा MySQL डेटाबेस में स्थायी रूप से सहेज लिया गया है। आपका रिपोर्ट कोड:" : "Project Card permanently saved to MySQL database. Report Code:"}{" "}
+            <strong style={{ background: "#d1fae5", padding: "2px 6px", borderRadius: "4px" }}>{savedCode}</strong>
+          </span>
+        </div>
+      )}
 
       {/* Actual Printable Certificate Card */}
       <div className="parcha-document-container" id="printable-report">

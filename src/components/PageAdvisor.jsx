@@ -46,6 +46,13 @@ export default function PageAdvisor({ result, lang = "hi", formatCurrency, busin
   const isHi = lang === "hi";
   const chatBottomRef = useRef(null);
   const msgCounterRef = useRef(1);
+  const sessionTokenRef = useRef("");
+
+  useEffect(() => {
+    if (!sessionTokenRef.current) {
+      sessionTokenRef.current = `session-${Math.random().toString(36).substring(2, 9)}-${Date.now()}`;
+    }
+  }, []);
 
   // Use robust merged businessContext fallback
   const rawCtx = businessContext || {};
@@ -634,6 +641,19 @@ When advising the user, actively use the real-time market data. If they ask abou
       }
 
       finalReply = generatedReply;
+
+      // Asynchronously log advisory conversation to MySQL (fail-safe)
+      fetch(API_ROUTES.ADVISORY_HISTORY, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionToken: sessionTokenRef.current,
+          userQuery: q,
+          aiResponse: generatedReply,
+          language: lang,
+          modelSource: data?.source || "gemini",
+        }),
+      }).catch(() => {});
 
       // Append the actual generated content string into the chat message state
       setMessages((prev) =>

@@ -12,6 +12,15 @@ import {
 import type { DairyAnalysisResult } from "./src/dairyDataService";
 import { MEERUT_DATA, getTehsilMarketReach } from "./locationData";
 import rawBlocksData from "./src/rawBlocksData.json";
+import { testDbConnection, closeDbPool, getDbConfigStatus } from "./db";
+import {
+  saveBusinessComplete,
+  getBusinessProfileById,
+  getSavedReportByCode,
+  saveAdvisoryMessage,
+  getAdvisoryHistoryBySession,
+  logMarketScan,
+} from "./src/db/businessRepository";
 
 function categorizeGeminiError(err: any): { category: string; description: string } {
   const status = err?.status || err?.statusCode || 0;
@@ -121,18 +130,43 @@ async function startServer() {
 
   // 1. Health & Status
 
-  app.get("/api/health", (_req, res) => {
+  app.get("/api/health", async (_req, res) => {
+    let dbStatus: { connected: boolean; version?: string; database?: string; error?: string } = {
+      connected: false,
+    };
+    try {
+      dbStatus = await testDbConnection();
+    } catch {
+      dbStatus = { connected: false, error: "Health check query failed" };
+    }
+
     res.json({
       status: "ok",
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      database: {
+        configured: getDbConfigStatus().isConfigured,
+        connected: dbStatus.connected,
+        version: dbStatus.connected ? dbStatus.version : undefined,
+        database: dbStatus.connected ? dbStatus.database : undefined,
+        status: dbStatus.connected ? "connected" : (dbStatus.error ? "unreachable" : "unconfigured"),
+      },
     });
   });
 
-  app.get("/api/status", (_req, res) => {
+  app.get("/api/status", async (_req, res) => {
+    let dbStatus = { connected: false };
+    try {
+      dbStatus = await testDbConnection();
+    } catch {
+      // Ignore
+    }
+
     res.json({
       message: "Vyapaar AI API is running!",
       status: "success",
       gemini_configured: Boolean(process.env.GEMINI_API_KEY),
+      database_configured: getDbConfigStatus().isConfigured,
+      database_connected: dbStatus.connected,
     });
   });
 
@@ -1089,6 +1123,173 @@ LANGUAGE & TONE:
     }
   });
 
+  // 8. MySQL Database Integration Endpoints
+
+  // Save Business Profile + Financial Record + Report Card Dossier
+  app.post("/api/business/save", async (req: express.Request, res: express.Response) => {
+    try {
+      const { profile, financials, reportPayload } = req.body;
+
+      if (!profile || typeof profile !== "object") {
+        res.status(400).json({ success: false, error: "Missing or invalid profile object" });
+        return;
+      }
+      if (!profile.business_name || !profile.business_name.trim()) {
+        res.status(400).json({ success: false, error: "Business name is required" });
+        return;
+      }
+      if (!profile.category || !profile.category.trim()) {
+        res.status(400).json({ success: false, error: "Business category is required" });
+        return;
+      }
+      if (!profile.state || !profile.state.trim() || !profile.district || !profile.district.trim()) {
+        res.status(400).json({ success: false, error: "State and District are required" });
+        return;
+      }
+
+      if (!financials || typeof financials !== "object") {
+        res.status(400).json({ success: false, error: "Missing or invalid financials object" });
+        return;
+      }
+
+      const status = getDbConfigStatus();
+      if (!status.isConfigured) {
+        res.status(503).json({
+          success: false,
+          error: "Database is not configured. Please ensure Aiven credentials and CA certificate are set.",
+        });
+        return;
+      }
+
+      const saveResult = await saveBusinessComplete(profile, financials, reportPayload);
+      res.json({
+        success: true,
+        message: "Business profile and financial dossier successfully saved to MySQL.",
+        ...saveResult,
+      });
+    } catch (err: any) {
+      console.error("[API Save Business Error]:", err?.message || err);
+      res.status(500).json({
+        success: false,
+        error: "Failed to save business record to database. Please check input data and database connectivity.",
+      });
+    }
+  });
+
+  // Retrieve Business Profile and latest financial record by ID
+  app.get("/api/business/:id", async (req: express.Request, res: express.Response) => {
+    try {
+      const idNum = parseInt(req.params.id, 10);
+      if (isNaN(idNum) || idNum <= 0) {
+        res.status(400).json({ success: false, error: "Invalid business ID. Must be a positive integer." });
+        return;
+      }
+
+      const business = await getBusinessProfileById(idNum);
+      if (!business) {
+        res.status(404).json({ success: false, error: `No business profile found with ID ${idNum}` });
+        return;
+      }
+
+      res.json({ success: true, data: business });
+    } catch (err: any) {
+      console.error("[API Get Business Error]:", err?.message || err);
+      res.status(500).json({ success: false, error: "Failed to retrieve business profile from database." });
+    }
+  });
+
+  // Retrieve saved dossier by report code (e.g. VAI-123456)
+  app.get("/api/reports/:reportCode", async (req: express.Request, res: express.Response) => {
+    try {
+      const code = (req.params.reportCode || "").trim();
+      if (!code) {
+        res.status(400).json({ success: false, error: "Report code is required" });
+        return;
+      }
+
+      const report = await getSavedReportByCode(code);
+      if (!report) {
+        res.status(404).json({ success: false, error: `No saved report dossier found for code ${code}` });
+        return;
+      }
+
+      res.json({ success: true, data: report });
+    } catch (err: any) {
+      console.error("[API Get Report Error]:", err?.message || err);
+      res.status(500).json({ success: false, error: "Failed to retrieve report dossier." });
+    }
+  });
+
+  // Save Advisory Q&A Interaction
+  app.post("/api/advisory/history", async (req: express.Request, res: express.Response) => {
+    try {
+      const { sessionToken, userQuery, aiResponse, businessId, language, modelSource } = req.body;
+      if (!sessionToken || !userQuery || !aiResponse) {
+        res.status(400).json({ success: false, error: "sessionToken, userQuery, and aiResponse are required." });
+        return;
+      }
+
+      const historyId = await saveAdvisoryMessage(
+        String(sessionToken),
+        String(userQuery),
+        String(aiResponse),
+        businessId ? Number(businessId) : null,
+        language || "hi",
+        modelSource || "gemini"
+      );
+
+      res.json({ success: true, historyId });
+    } catch (err: any) {
+      console.error("[API Save Advisory History Error]:", err?.message || err);
+      res.status(500).json({ success: false, error: "Failed to record advisory interaction." });
+    }
+  });
+
+  // Get Advisory Q&A Interaction History
+  app.get("/api/advisory/history", async (req: express.Request, res: express.Response) => {
+    try {
+      const sessionToken = (req.query.sessionToken as string || "").trim();
+      if (!sessionToken) {
+        res.status(400).json({ success: false, error: "sessionToken query parameter is required." });
+        return;
+      }
+
+      const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 20));
+      const history = await getAdvisoryHistoryBySession(sessionToken, limit);
+      res.json({ success: true, history });
+    } catch (err: any) {
+      console.error("[API Get Advisory History Error]:", err?.message || err);
+      res.status(500).json({ success: false, error: "Failed to retrieve advisory history." });
+    }
+  });
+
+  // Log Market Scan Summary
+  app.post("/api/market/scan-log", async (req: express.Request, res: express.Response) => {
+    try {
+      const { district, radiusMeters, competitorCount, bankCount, mandiCount, businessId, latitude, longitude } = req.body;
+      if (!district) {
+        res.status(400).json({ success: false, error: "district is required" });
+        return;
+      }
+
+      const logId = await logMarketScan(
+        String(district),
+        Number(radiusMeters) || 10000,
+        Number(competitorCount) || 0,
+        Number(bankCount) || 0,
+        Number(mandiCount) || 0,
+        businessId ? Number(businessId) : null,
+        latitude != null ? Number(latitude) : null,
+        longitude != null ? Number(longitude) : null
+      );
+
+      res.json({ success: true, logId });
+    } catch (err: any) {
+      console.error("[API Log Market Scan Error]:", err?.message || err);
+      res.status(500).json({ success: false, error: "Failed to log market scan summary." });
+    }
+  });
+
   // Vite middleware for development
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
@@ -1104,9 +1305,21 @@ LANGUAGE & TONE:
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const server = app.listen(PORT, "0.0.0.0", () => {
     console.log(`Vyapaar AI Server running on http://localhost:${PORT}`);
   });
+
+  // Graceful shutdown handling
+  const handleShutdown = async (signal: string) => {
+    console.log(`[Vyapaar AI Server] ${signal} signal received. Closing HTTP server & MySQL pool...`);
+    server.close(async () => {
+      await closeDbPool();
+      process.exit(0);
+    });
+  };
+
+  process.on("SIGTERM", () => handleShutdown("SIGTERM"));
+  process.on("SIGINT", () => handleShutdown("SIGINT"));
 }
 
 startServer();

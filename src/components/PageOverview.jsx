@@ -1,7 +1,89 @@
+import { useState } from "react";
+import { Database, CheckCircle2, AlertCircle, Loader2, Copy, Check } from "lucide-react";
 import MinimalPieChart from "./MinimalPieChart";
+import { API_ROUTES } from "../apiRoutes";
 
 export default function PageOverview({ result, formatCurrency, lang, onJumpPage }) {
   const isHi = lang === "hi";
+
+  const [savingToDb, setSavingToDb] = useState(false);
+  const [dbSaveResult, setDbSaveResult] = useState(null);
+  const [dbSaveError, setDbSaveError] = useState("");
+  const [copiedCode, setCopiedCode] = useState(false);
+
+  const handleSaveToDb = async () => {
+    setSavingToDb(true);
+    setDbSaveError("");
+    try {
+      const projectCost =
+        result.scheme_analysis?.project_cost ||
+        (result.investment ? Number(result.investment) / 0.1 : 0);
+      const marginCapital =
+        result.scheme_analysis?.margin_capital ||
+        result.scheme_analysis?.beneficiary_contribution ||
+        Number(result.investment) || 0;
+      const eligibleLoan = result.scheme_analysis?.eligible_loan || 0;
+
+      const profile = {
+        business_name: result.business || "Kisan Enterprise",
+        category: result.category || "General",
+        state: result.state || "Uttar Pradesh",
+        district: result.district || "Meerut",
+        block: result.block || "",
+        village_location: result.location || result.block || "",
+        pincode: result.pin || "",
+        experience_level: result.experience || "Beginner",
+        udyam_number: result.udyam_number || "",
+      };
+
+      const financials = {
+        project_cost: Number(projectCost) || 0,
+        margin_capital: Number(marginCapital) || 0,
+        eligible_loan: Number(eligibleLoan) || 0,
+        monthly_revenue: Number(result.monthly_revenue) || 0,
+        monthly_expenses: Number(result.monthly_expenses) || 0,
+        monthly_profit: Number(result.financial_analysis?.monthly_profit) || 0,
+        yearly_profit: Number(result.financial_analysis?.yearly_profit) || 0,
+        monthly_emi: Number(result.loan_affordability?.monthly_emi) || 0,
+        matched_scheme_name: result.scheme_analysis?.scheme_name || null,
+        interest_rate: result.scheme_analysis?.interest_rate != null ? Number(result.scheme_analysis.interest_rate) : null,
+        tenure_months: result.scheme_analysis?.loan_tenure_months != null ? Number(result.scheme_analysis.loan_tenure_months) : null,
+        moratorium_months: result.scheme_analysis?.moratorium_months != null ? Number(result.scheme_analysis.moratorium_months) : null,
+        affordability_status: result.loan_affordability?.affordability_status || null,
+        feasibility_verdict: result.feasibilityVerdict || result.feasibility || null,
+      };
+
+      const res = await fetch(API_ROUTES.SAVE_BUSINESS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          profile,
+          financials,
+          reportPayload: result,
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to save to database");
+      }
+
+      setDbSaveResult(data);
+    } catch (err) {
+      console.warn("Save to DB failed:", err);
+      setDbSaveError(err?.message || "Database is currently offline or unreachable.");
+    } finally {
+      setSavingToDb(false);
+    }
+  };
+
+  const handleCopyCode = (code) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(code);
+      setCopiedCode(true);
+      setTimeout(() => setCopiedCode(false), 2000);
+    }
+  };
 
   const monthlyProfit = result.financial_analysis?.monthly_profit ?? 0;
   const yearlyProfit = result.financial_analysis?.yearly_profit ?? 0;
@@ -268,6 +350,137 @@ export default function PageOverview({ result, formatCurrency, lang, onJumpPage 
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Aiven MySQL Database Persistence Card */}
+      <div className="detail-card" style={{ marginBottom: "24px", border: "1px solid #cbd5e1", borderRadius: "12px", padding: "18px 20px", background: "#ffffff" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <div style={{
+              width: "40px",
+              height: "40px",
+              borderRadius: "10px",
+              background: "#e0f2fe",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#0369a1"
+            }}>
+              <Database size={22} />
+            </div>
+            <div>
+              <h4 style={{ margin: 0, fontSize: "16px", fontWeight: "700", color: "#0f172a" }}>
+                {isHi ? "Aiven MySQL क्लाउड डेटाबेस में सुरक्षित करें" : "Save Record to Aiven MySQL 8.4"}
+              </h4>
+              <p style={{ margin: "2px 0 0", fontSize: "13px", color: "#64748b" }}>
+                {isHi
+                  ? "इस व्यापार का पूरा मूल्यांकन व प्रोजेक्ट पर्चा हमेशा के लिए सहेजें।"
+                  : "Persist applicant profile, financial metrics, and scheme evaluation."}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSaveToDb}
+            disabled={savingToDb}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              backgroundColor: dbSaveResult ? "#059669" : "#0f766e",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: "8px",
+              padding: "9px 18px",
+              fontWeight: "600",
+              fontSize: "14px",
+              cursor: savingToDb ? "not-allowed" : "pointer",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {savingToDb ? (
+              <>
+                <Loader2 size={16} className="animate-spin" />
+                <span>{isHi ? "सहेजा जा रहा है..." : "Saving..."}</span>
+              </>
+            ) : dbSaveResult ? (
+              <>
+                <CheckCircle2 size={16} />
+                <span>{isHi ? "सहेजा जा चुका है" : "Saved to MySQL"}</span>
+              </>
+            ) : (
+              <>
+                <Database size={16} />
+                <span>{isHi ? "डेटाबेस में सहेजें (Save to DB)" : "Save Evaluation"}</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {dbSaveResult && (
+          <div style={{
+            marginTop: "14px",
+            padding: "12px 14px",
+            borderRadius: "8px",
+            backgroundColor: "#ecfdf5",
+            border: "1px solid #a7f3d0",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: "10px"
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#065f46", fontSize: "13.5px" }}>
+              <CheckCircle2 size={18} color="#059669" />
+              <span>
+                <strong>{isHi ? "सफलतापूर्वक सुरक्षित!" : "Successfully Saved!"}</strong>{" "}
+                {isHi ? `रिकॉर्ड आईडी: #${dbSaveResult.businessId} • रिपोर्ट कोड:` : `Business ID: #${dbSaveResult.businessId} • Report Code:`}{" "}
+                <code style={{ background: "#d1fae5", padding: "2px 6px", borderRadius: "4px", fontWeight: "700" }}>
+                  {dbSaveResult.reportCode}
+                </code>
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => handleCopyCode(dbSaveResult.reportCode)}
+              style={{
+                background: "transparent",
+                border: "1px solid #10b981",
+                borderRadius: "6px",
+                padding: "4px 10px",
+                fontSize: "12px",
+                fontWeight: "600",
+                color: "#047857",
+                cursor: "pointer",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "5px"
+              }}
+            >
+              {copiedCode ? <Check size={13} /> : <Copy size={13} />}
+              <span>{copiedCode ? (isHi ? "कॉपी हो गया" : "Copied") : (isHi ? "कोड कॉपी करें" : "Copy Code")}</span>
+            </button>
+          </div>
+        )}
+
+        {dbSaveError && (
+          <div style={{
+            marginTop: "14px",
+            padding: "10px 14px",
+            borderRadius: "8px",
+            backgroundColor: "#fef2f2",
+            border: "1px solid #fecaca",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px",
+            color: "#991b1b",
+            fontSize: "13px"
+          }}>
+            <AlertCircle size={16} />
+            <span>{dbSaveError}</span>
+          </div>
+        )}
       </div>
 
       {/* Quick Jump Action Cards */}

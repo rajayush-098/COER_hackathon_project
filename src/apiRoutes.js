@@ -12,6 +12,12 @@ export const API_ROUTES = {
   MARKET_REACH: "/api/market-reach",
   TEHSILS: "/api/locations/tehsils",
   VERIFY_UDYAM: "/api/verify-udyam",
+  // MySQL Database endpoints
+  SAVE_BUSINESS: "/api/business/save",
+  GET_BUSINESS: "/api/business",
+  GET_REPORT: "/api/reports",
+  ADVISORY_HISTORY: "/api/advisory/history",
+  MARKET_SCAN_LOG: "/api/market/scan-log",
 };
 
 export default API_ROUTES;
