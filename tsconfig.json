@@ -14,10 +14,11 @@
     "types": ["node"]
   },
   "include": [
-    "src",
-    "server.ts",
-    "db.ts",
-    "test-db.ts",
-    "locationData.ts"
-  ]
+  "src",
+  "server.ts",
+  "db.ts",
+  "test-db.ts",
+  "verify-db.ts",
+  "locationData.ts"
+]
 }

@@ -55,11 +55,15 @@ export async function runMigrations(): Promise<{ success: boolean; appliedTables
 
   const sqlContent = fs.readFileSync(schemaPath, "utf8");
 
-  // Split into individual SQL statements by semicolon, ignoring comments
-  const statements = sqlContent
-    .split(/;\s*[\r\n]+/)
-    .map((stmt) => stmt.trim())
-    .filter((stmt) => stmt.length > 0 && !stmt.startsWith("--"));
+// Remove full-line SQL comments before splitting statements.
+// This prevents comments above CREATE TABLE from causing
+// valid SQL statements to be discarded.
+const cleanedSql = sqlContent.replace(/^\s*--.*$/gm, "");
+
+const statements = cleanedSql
+  .split(/;\s*(?:\r?\n|$)/)
+  .map((stmt) => stmt.trim())
+  .filter((stmt) => stmt.length > 0);
 
   const appliedTables: string[] = [];
 
