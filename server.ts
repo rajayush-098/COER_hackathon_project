@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { createServer as createViteServer } from "vite";
@@ -10,6 +11,10 @@ import {
   formatCsvDataLayer,
 } from "./src/dairyDataService";
 import type { DairyAnalysisResult } from "./src/dairyDataService";
+import {
+  fetchMandiCommodityPrices,
+  getSuggestedCommoditiesForCategory,
+} from "./src/mandiDataService";
 import { MEERUT_DATA, getTehsilMarketReach } from "./locationData";
 import rawBlocksData from "./src/rawBlocksData.json";
 import { testDbConnection, closeDbPool, getDbConfigStatus } from "./db";
@@ -1387,6 +1392,53 @@ LANGUAGE & TONE:
     } catch (err: any) {
       console.error("[API Log Market Scan Error]:", err?.message || err);
       res.status(500).json({ success: false, error: "Failed to log market scan summary." });
+    }
+  });
+
+  // 9. data.gov.in Mandi Commodity Prices Endpoints (Resource ID: 9ef84268-d588-465a-a308-a864a43d0070)
+  app.get("/api/mandi/prices", async (req: express.Request, res: express.Response) => {
+    try {
+      const commodity = req.query.commodity as string | undefined;
+      const state = req.query.state as string | undefined;
+      const district = req.query.district as string | undefined;
+      const market = req.query.market as string | undefined;
+      const limit = req.query.limit ? Number(req.query.limit) : 20;
+      const offset = req.query.offset ? Number(req.query.offset) : 0;
+
+      const result = await fetchMandiCommodityPrices({
+        commodity,
+        state,
+        district,
+        market,
+        limit,
+        offset,
+      });
+
+      res.json(result);
+    } catch (err: any) {
+      console.error("[API Mandi Prices Error]:", err?.message || err);
+      res.status(500).json({
+        success: false,
+        configured: Boolean(process.env.DATA_GOV_IN_API_KEY),
+        resource_id: "9ef84268-d588-465a-a308-a864a43d0070",
+        total: 0,
+        count: 0,
+        limit: 20,
+        offset: 0,
+        unit: "₹/Quintal",
+        records: [],
+        error: "Internal server error while retrieving Mandi commodity prices",
+      });
+    }
+  });
+
+  app.get("/api/mandi/suggestions", (req: express.Request, res: express.Response) => {
+    try {
+      const category = req.query.category as string | undefined;
+      const suggestions = getSuggestedCommoditiesForCategory(category);
+      res.json({ success: true, category, suggestions });
+    } catch (err: any) {
+      res.status(500).json({ success: false, suggestions: [] });
     }
   });
 

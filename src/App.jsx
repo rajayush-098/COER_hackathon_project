@@ -1627,7 +1627,9 @@ function App() {
           <div className="analysis-hub-layout">
             {/* Top Navigation Bar inside Results View */}
             <div className="hub-top-strip no-print">
-              <div className="hub-top-left">
+              <div className="hub-top-spacer" />
+
+              <div className="hub-top-center-cluster">
                 <button
                   type="button"
                   className="hub-nav-toggle-btn"
@@ -1639,13 +1641,8 @@ function App() {
                   <span className="toggle-label">
                     {t.stepsMenuBtn || (lang === "hi" ? "11 चरण मेन्यू" : "11 Steps Menu")}
                   </span>
-                  <span className="toggle-current-badge">
-                    {currentIndex + 1}/11
-                  </span>
                 </button>
-              </div>
 
-              <div className="hub-top-center">
                 <h2 className="hub-business-title">
                   {result.business}
                 </h2>

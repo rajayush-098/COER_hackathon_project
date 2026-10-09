@@ -9,6 +9,7 @@ import {
   translateDemand,
   translateDynamicPhrase,
 } from "../utils/translationHelper";
+import MandiPricesSection from "./MandiPricesSection";
 
 export default function PageMarket({ 
   result, 
@@ -480,6 +481,14 @@ export default function PageMarket({
           </div>
         </div>
       )}
+
+      {/* Live Mandi Commodity Benchmark Prices (data.gov.in) */}
+      <MandiPricesSection
+        defaultState={targetState}
+        defaultDistrict={targetDistrict}
+        category={formData?.category || result?.category}
+        lang={lang}
+      />
 
       {/* Local Recommendation advice */}
       <div className="village-tip-banner">
